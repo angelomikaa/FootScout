@@ -32,6 +32,8 @@ export async function getPlayerById(id: string): Promise<Player | null> {
   return player || null;
 }
 
+// WR-02: Race condition in concurrent write operations - not atomic
+// TODO: Implement file locking for concurrent writes
 export async function createPlayer(input: NewPlayer): Promise<Player> {
   const players = await getPlayers();
   const newPlayer: Player = {
@@ -43,6 +45,8 @@ export async function createPlayer(input: NewPlayer): Promise<Player> {
   playerSchema.parse(newPlayer);
   
   players.push(newPlayer);
+  // WR-01: Validate entire array before write to catch data corruption
+  playerSchema.array().parse(players);
   await fs.writeFile(
     join(DATA_DIR, "players.json"),
     JSON.stringify(players, null, 2),
@@ -72,12 +76,15 @@ export async function getReportsByPlayer(playerId: string): Promise<Report[]> {
   return reports.filter((r) => r.playerId === playerId);
 }
 
+// WR-02: Race condition in concurrent write operations - not atomic
+// WR-03: Foreign key validation uses stale data (TOCTOU vulnerability)
+// TODO: Use transaction to ensure referential integrity
 export async function createReport(input: NewReport): Promise<Report> {
   const player = await getPlayerById(input.playerId);
   if (!player) {
     throw new Error(`Player not found: ${input.playerId}`);
   }
-  
+
   const scout = await getScoutById(input.scoutId);
   if (!scout) {
     throw new Error(`Scout not found: ${input.scoutId}`);
@@ -93,6 +100,8 @@ export async function createReport(input: NewReport): Promise<Report> {
   
   const reports = await getReports();
   reports.push(newReport);
+  // WR-01: Validate entire array before write to catch data corruption
+  reportSchema.array().parse(reports);
   await fs.writeFile(
     join(DATA_DIR, "reports.json"),
     JSON.stringify(reports, null, 2),
@@ -123,6 +132,7 @@ export async function getScoutById(id: string): Promise<Scout | null> {
   return scout || null;
 }
 
+// WR-02: Race condition in concurrent write operations - not atomic
 export async function createScout(input: NewScout): Promise<Scout> {
   const newScout: Scout = {
     ...input,
@@ -134,6 +144,8 @@ export async function createScout(input: NewScout): Promise<Scout> {
   
   const scouts = await getScouts();
   scouts.push(newScout);
+  // WR-01: Validate entire array before write to catch data corruption
+  scoutSchema.array().parse(scouts);
   await fs.writeFile(
     join(DATA_DIR, "scouts.json"),
     JSON.stringify(scouts, null, 2),
