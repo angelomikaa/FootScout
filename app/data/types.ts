@@ -31,6 +31,10 @@ export type PreferredFoot = z.infer<typeof preferredFootSchema>;
 export const nationalityCodeSchema = z.string().regex(/^[A-Z]{2}$/);
 export type NationalityCode = z.infer<typeof nationalityCodeSchema>;
 
+// WR-05: ISO date and datetime format validation
+export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be in ISO date format (YYYY-MM-DD)");
+export const isoDateTimeSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/, "Must be in ISO datetime format (YYYY-MM-DDTHH:MM:SS)");
+
 // Attribute score: 1-5 integer or null (not observed) - NEVER treat null as 3 (D-03)
 export const attributeScoreSchema = z.number().int().min(1).max(5).nullable();
 export type AttributeScore = z.infer<typeof attributeScoreSchema>;
@@ -76,7 +80,7 @@ export type MatchNotesAttributes = z.infer<typeof matchNotesAttributesSchema>;
 export const playerSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
-  dateOfBirth: z.string(), // ISO date "YYYY-MM-DD"
+  dateOfBirth: isoDateSchema, // ISO date "YYYY-MM-DD"
   positionGroup: positionGroupSchema,
   position: positionSchema,
   club: z.string().min(1),
@@ -84,7 +88,7 @@ export const playerSchema = z.object({
   preferredFoot: preferredFootSchema,
   height: z.number().int().positive().optional(), // cm (D-05)
   weight: z.number().int().positive().optional(), // kg (D-05)
-  createdAt: z.string(), // ISO datetime
+  createdAt: isoDateTimeSchema, // ISO datetime
 });
 export type Player = z.infer<typeof playerSchema>;
 export type NewPlayer = Omit<Player, "id" | "createdAt">;
@@ -94,7 +98,7 @@ export const reportSchema = z.object({
   id: z.string(),
   playerId: z.string(),
   scoutId: z.string(),
-  matchDate: z.string(), // ISO date "YYYY-MM-DD"
+  matchDate: isoDateSchema, // ISO date "YYYY-MM-DD"
   opponent: z.string().min(1),
   competition: z.string().min(1),
   matchResult: z.string().optional(),
@@ -102,7 +106,7 @@ export const reportSchema = z.object({
   technical: technicalAttributesSchema,
   tactical: tacticalAttributesSchema,
   matchNotes: matchNotesAttributesSchema,
-  createdAt: z.string(), // ISO datetime
+  createdAt: isoDateTimeSchema, // ISO datetime
 });
 export type Report = z.infer<typeof reportSchema>;
 export type NewReport = Omit<Report, "id" | "createdAt">;
@@ -111,7 +115,7 @@ export type NewReport = Omit<Report, "id" | "createdAt">;
 export const scoutSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
-  createdAt: z.string(), // ISO datetime
+  createdAt: isoDateTimeSchema, // ISO datetime
 });
 export type Scout = z.infer<typeof scoutSchema>;
 export type NewScout = Omit<Scout, "id" | "createdAt">;
