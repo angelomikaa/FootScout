@@ -1,0 +1,39 @@
+[
+  {
+    "id": "player-001",
+    "name": "Mateo Fernández",
+    "dateOfBirth": "2011-03-15",
+    "positionGroup": "FWD",
+    "position": "ST",
+    "club": "River Plate",
+    "nationality": "AR",
+    "preferredFoot": "right",
+    "height": 170,
+    "weight": 62,
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "player-002",
+    "name": "Lucas Rodríguez",
+    "dateOfBirth": "2011-07-22",
+    "positionGroup": "MID",
+    "position": "CM",
+    "club": "Boca Juniors",
+    "nationality": "AR",
+    "preferredFoot": "both",
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "player-003",
+    "name": "Sofía Martínez",
+    "dateOfBirth": "2011-11-08",
+    "positionGroup": "DEF",
+    "position": "CB",
+    "club": "San Lorenzo",
+    "nationality": "AR",
+    "preferredFoot": "left",
+    "height": 165,
+    "weight": 58,
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "scout-001",
+    "name": "Juan Pérez",
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "scout-002",
+    "name": "María García",
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  }
+]

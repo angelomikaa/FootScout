@@ -1,0 +1,173 @@
+[
+  {
+    "id": "report-001",
+    "playerId": "player-001",
+    "scoutId": "scout-001",
+    "matchDate": "2026-05-10",
+    "opponent": "Boca Juniors",
+    "competition": "Liga U15",
+    "physical": {
+      "pace": 5,
+      "strength": 3,
+      "stamina": 4,
+      "agility": 5
+    },
+    "technical": {
+      "finishing": 5,
+      "passing": 3,
+      "dribbling": 4,
+      "firstTouch": 4
+    },
+    "tactical": {
+      "positioning": 4,
+      "awareness": 3,
+      "decisionMaking": 3,
+      "workRate": 4
+    },
+    "matchNotes": {
+      "attitude": 5,
+      "coachability": 4,
+      "intensity": 4,
+      "impact": 5,
+      "notes": "Exceptional pace and finishing. Stood out in transition."
+    },
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "report-002",
+    "playerId": "player-001",
+    "scoutId": "scout-002",
+    "matchDate": "2026-05-10",
+    "opponent": "Boca Juniors",
+    "competition": "Liga U15",
+    "physical": {
+      "pace": 4,
+      "strength": 3,
+      "stamina": null,
+      "agility": 4
+    },
+    "technical": {
+      "finishing": 4,
+      "passing": 3,
+      "dribbling": 4,
+      "firstTouch": 3
+    },
+    "tactical": {
+      "positioning": 4,
+      "awareness": 3,
+      "decisionMaking": 3,
+      "workRate": null
+    },
+    "matchNotes": {
+      "attitude": 4,
+      "coachability": 4,
+      "intensity": 4,
+      "impact": 4,
+      "notes": "Good performance, some attributes not observed."
+    },
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "report-003",
+    "playerId": "player-002",
+    "scoutId": "scout-001",
+    "matchDate": "2026-05-09",
+    "opponent": "Racing Club",
+    "competition": "Copa Desarrollo",
+    "physical": {
+      "pace": 3,
+      "strength": 3,
+      "stamina": 4,
+      "agility": 3
+    },
+    "technical": {
+      "finishing": 3,
+      "passing": 5,
+      "dribbling": 4,
+      "firstTouch": 4
+    },
+    "tactical": {
+      "positioning": 4,
+      "awareness": 4,
+      "decisionMaking": 4,
+      "workRate": null
+    },
+    "matchNotes": {
+      "attitude": 4,
+      "coachability": 5,
+      "intensity": 3,
+      "impact": 4,
+      "notes": "Excellent passing range, controls the midfield."
+    },
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "report-004",
+    "playerId": "player-002",
+    "scoutId": "scout-002",
+    "matchDate": "2026-05-11",
+    "opponent": "Independiente",
+    "competition": "Copa Desarrollo",
+    "physical": {
+      "pace": 3,
+      "strength": 4,
+      "stamina": 4,
+      "agility": 3
+    },
+    "technical": {
+      "finishing": 3,
+      "passing": 4,
+      "dribbling": 4,
+      "firstTouch": 4
+    },
+    "tactical": {
+      "positioning": 4,
+      "awareness": 4,
+      "decisionMaking": 3,
+      "workRate": 4
+    },
+    "matchNotes": {
+      "attitude": 4,
+      "coachability": 4,
+      "intensity": 4,
+      "impact": 4,
+      "notes": "Consistent performance, strong work rate."
+    },
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "report-005",
+    "playerId": "player-003",
+    "scoutId": "scout-001",
+    "matchDate": "2026-05-10",
+    "opponent": "Huracán",
+    "competition": "Liga U15",
+    "matchResult": "2-0",
+    "physical": {
+      "pace": 3,
+      "strength": 4,
+      "stamina": 4,
+      "agility": 3
+    },
+    "technical": {
+      "finishing": 2,
+      "passing": 3,
+      "dribbling": 3,
+      "firstTouch": 3
+    },
+    "tactical": {
+      "positioning": 5,
+      "awareness": 4,
+      "decisionMaking": 4,
+      "workRate": 5
+    },
+    "matchNotes": {
+      "attitude": 5,
+      "coachability": 4,
+      "intensity": 5,
+      "impact": 4,
+      "notes": "Strong defensive presence, excellent positioning."
+    },
+    "createdAt": "2026-05-12T00:00:00.000Z"
+  }
+]
