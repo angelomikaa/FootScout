@@ -6,14 +6,23 @@ import { playerSchema, reportSchema, scoutSchema } from "./types.js";
 
 const DATA_DIR = join(process.cwd(), "app/data");
 
+// Helper function to check for ENOENT errors
+function isNotFound(error: unknown): boolean {
+  return error instanceof Error && 'code' in error && error.code === 'ENOENT';
+}
+
 // Player functions
 export async function getPlayers(): Promise<Player[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "players.json"), "utf-8");
     const players = JSON.parse(content);
-    return players.map((p: any) => playerSchema.parse(p));
-  } catch {
-    return [];
+    return players.map((p) => playerSchema.parse(p));
+  } catch (error) {
+    if (isNotFound(error)) {
+      return []; // File doesn't exist yet - OK to return empty
+    }
+    // Re-throw data corruption, permission, or parsing errors
+    throw new Error(`Failed to read players.json: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -48,9 +57,13 @@ export async function getReports(): Promise<Report[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "reports.json"), "utf-8");
     const reports = JSON.parse(content);
-    return reports.map((r: any) => reportSchema.parse(r));
-  } catch {
-    return [];
+    return reports.map((r) => reportSchema.parse(r));
+  } catch (error) {
+    if (isNotFound(error)) {
+      return []; // File doesn't exist yet - OK to return empty
+    }
+    // Re-throw data corruption, permission, or parsing errors
+    throw new Error(`Failed to read reports.json: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -94,9 +107,13 @@ export async function getScouts(): Promise<Scout[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "scouts.json"), "utf-8");
     const scouts = JSON.parse(content);
-    return scouts.map((s: any) => scoutSchema.parse(s));
-  } catch {
-    return [];
+    return scouts.map((s) => scoutSchema.parse(s));
+  } catch (error) {
+    if (isNotFound(error)) {
+      return []; // File doesn't exist yet - OK to return empty
+    }
+    // Re-throw data corruption, permission, or parsing errors
+    throw new Error(`Failed to read scouts.json: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
