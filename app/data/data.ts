@@ -16,7 +16,7 @@ export async function getPlayers(): Promise<Player[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "players.json"), "utf-8");
     const players = JSON.parse(content);
-    return players.map((p) => playerSchema.parse(p));
+    return players.map((p: unknown) => playerSchema.parse(p));
   } catch (error) {
     if (isNotFound(error)) {
       return []; // File doesn't exist yet - OK to return empty
@@ -61,7 +61,7 @@ export async function getReports(): Promise<Report[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "reports.json"), "utf-8");
     const reports = JSON.parse(content);
-    return reports.map((r) => reportSchema.parse(r));
+    return reports.map((r: unknown) => reportSchema.parse(r));
   } catch (error) {
     if (isNotFound(error)) {
       return []; // File doesn't exist yet - OK to return empty
@@ -116,7 +116,7 @@ export async function getScouts(): Promise<Scout[]> {
   try {
     const content = await fs.readFile(join(DATA_DIR, "scouts.json"), "utf-8");
     const scouts = JSON.parse(content);
-    return scouts.map((s) => scoutSchema.parse(s));
+    return scouts.map((s: unknown) => scoutSchema.parse(s));
   } catch (error) {
     if (isNotFound(error)) {
       return []; // File doesn't exist yet - OK to return empty
