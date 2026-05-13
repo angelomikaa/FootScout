@@ -106,10 +106,16 @@ export const reportSchema = z.object({
   technical: technicalAttributesSchema,
   tactical: tacticalAttributesSchema,
   matchNotes: matchNotesAttributesSchema,
+  status: z.enum(["draft", "submitted"]).default("submitted"),
+  currentStep: z.number().default(0),
   createdAt: isoDateTimeSchema, // ISO datetime
+  updatedAt: isoDateTimeSchema, // ISO datetime
 });
 export type Report = z.infer<typeof reportSchema>;
-export type NewReport = Omit<Report, "id" | "createdAt">;
+export type NewReport = Omit<Report, "id" | "createdAt" | "updatedAt"> & {
+  status?: "draft" | "submitted";
+  currentStep?: number;
+};
 
 // Scout type (D-10)
 export const scoutSchema = z.object({
