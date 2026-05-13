@@ -18,7 +18,7 @@
 - [ ] **SCOUT-01**: Scout can create a new player entry when submitting first report
 - [ ] **SCOUT-02**: Scout can submit a report with staged form (physical → technical → tactical → notes)
 - [x] **SCOUT-03**: Scout can save report as draft and resume later
-- [ ] **SCOUT-04**: Scout can view list of their own submitted reports
+- [x] **SCOUT-04**: Scout can view list of their own submitted reports
 
 ### Player Browsing
 
@@ -93,7 +93,7 @@
 | SCOUT-01 | Phase 2 | Pending |
 | SCOUT-02 | Phase 2 | Pending |
 | SCOUT-03 | Phase 3 | Complete |
-| SCOUT-04 | Phase 3 | Pending |
+| SCOUT-04 | Phase 3 | Complete |
 | BROWSE-01 | Phase 4 | Pending |
 | BROWSE-02 | Phase 4 | Pending |
 | BROWSE-03 | Phase 5 | Pending |

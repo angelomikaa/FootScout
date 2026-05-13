@@ -120,7 +120,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Data Foundation | 1/1 | Complete | 2026-05-12 |
 | 2. Scout Report Form | 3/3 | Complete | 2026-05-13 |
-| 3. Draft & Report Management | 0/TBD | Not started | - |
+| 3. Draft & Report Management | 3/3 | Complete | 2026-05-13 |
 | 4. Player List & Search | 0/TBD | Not started | - |
 | 5. Player Profile | 0/TBD | Not started | - |
 | 6. Simple Scoring & Radar | 0/TBD | Not started | - |
