@@ -76,6 +76,15 @@ export async function getReportsByPlayer(playerId: string): Promise<Report[]> {
   return reports.filter((r) => r.playerId === playerId);
 }
 
+// Helper function to write reports to file
+export async function writeReports(reports: Report[]): Promise<void> {
+  await fs.writeFile(
+    join(DATA_DIR, "reports.json"),
+    JSON.stringify(reports, null, 2),
+    "utf-8"
+  );
+}
+
 // WR-02: Race condition in concurrent write operations - not atomic
 // WR-03: Foreign key validation uses stale data (TOCTOU vulnerability)
 // TODO: Use transaction to ensure referential integrity
@@ -89,26 +98,103 @@ export async function createReport(input: NewReport): Promise<Report> {
   if (!scout) {
     throw new Error(`Scout not found: ${input.scoutId}`);
   }
-  
+
   const newReport: Report = {
     ...input,
     id: randomUUID(),
+    status: input.status ?? "submitted",
+    currentStep: input.currentStep ?? 0,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
-  
+
   reportSchema.parse(newReport);
-  
+
   const reports = await getReports();
   reports.push(newReport);
   // WR-01: Validate entire array before write to catch data corruption
   reportSchema.array().parse(reports);
-  await fs.writeFile(
-    join(DATA_DIR, "reports.json"),
-    JSON.stringify(reports, null, 2),
-    "utf-8"
-  );
-  
+  await writeReports(reports);
+
   return newReport;
+}
+
+// Get draft report by scout ID
+export async function getDraftByScout(scoutId: string): Promise<Report | null> {
+  const reports = await getReports();
+  const draft = reports.find((r) => r.scoutId === scoutId && r.status === "draft");
+  return draft || null;
+}
+
+// Upsert draft (create or update)
+export async function upsertDraft(data: NewReport): Promise<Report> {
+  const reports = await getReports();
+  const existingDraft = reports.find(
+    (r) => r.scoutId === data.scoutId && r.status === "draft"
+  );
+
+  if (existingDraft) {
+    // Update existing draft
+    const updated: Report = {
+      ...existingDraft,
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    const index = reports.findIndex((r) => r.id === existingDraft.id);
+    reports[index] = updated;
+    await writeReports(reports);
+    return updated;
+  } else {
+    // Create new draft
+    const newReport: Report = {
+      ...data,
+      id: randomUUID(),
+      status: "draft",
+      currentStep: data.currentStep ?? 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    reports.push(newReport);
+    await writeReports(reports);
+    return newReport;
+  }
+}
+
+// Submit draft (change status from draft to submitted)
+export async function submitDraft(reportId: string): Promise<Report> {
+  const reports = await getReports();
+  const report = reports.find((r) => r.id === reportId);
+  if (!report) throw new Error("Report not found");
+
+  report.status = "submitted";
+  report.updatedAt = new Date().toISOString();
+
+  await writeReports(reports);
+  return report;
+}
+
+// Delete draft
+export async function deleteDraft(reportId: string): Promise<void> {
+  const reports = await getReports();
+  const filtered = reports.filter(
+    (r) => r.id !== reportId || r.status !== "draft"
+  );
+  if (filtered.length !== reports.length) {
+    await writeReports(filtered);
+  }
+}
+
+// Get reports by scout (optionally filtered by status)
+export async function getReportsByScout(
+  scoutId: string,
+  status?: "draft" | "submitted"
+): Promise<Report[]> {
+  const reports = await getReports();
+  return reports.filter((r) => {
+    if (r.scoutId !== scoutId) return false;
+    if (status && r.status !== status) return false;
+    return true;
+  });
 }
 
 // Scout functions
