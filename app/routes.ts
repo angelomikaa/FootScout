@@ -6,4 +6,7 @@ export default [
     route("report", "routes/scout/report.tsx"),
     route("reports", "routes/scout/reports.tsx"),
   ]),
+  ...prefix("division", [
+    route("players", "routes/division/players.tsx"),
+  ]),
 ] satisfies RouteConfig;
