@@ -1,10 +1,20 @@
 import type { Player } from "../data/types";
+import { Input } from "./ui/input";
+import { Select } from "./ui/select";
+import { Search } from "lucide-react";
 
 interface PlayerListProps {
   players: Player[];
   sortBy: string;
   sortDirection: "asc" | "desc";
   onSort: (column: string) => void;
+  search: string;
+  onSearch: (value: string) => void;
+  positionFilter: string;
+  onPositionFilterChange: (value: string) => void;
+  clubFilter: string;
+  onClubFilterChange: (value: string) => void;
+  uniqueClubs: string[];
 }
 
 export function PlayerList({
@@ -12,6 +22,13 @@ export function PlayerList({
   sortBy,
   sortDirection,
   onSort,
+  search,
+  onSearch,
+  positionFilter,
+  onPositionFilterChange,
+  clubFilter,
+  onClubFilterChange,
+  uniqueClubs,
 }: PlayerListProps) {
   // Calculate age from dateOfBirth
   const calculateAge = (dateOfBirth: string): number => {
@@ -104,18 +121,107 @@ export function PlayerList({
     onSort(column);
   };
 
-  if (players.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold text-gray-900">No players yet</h3>
-        <p className="text-gray-500 mt-2">
-          Players will appear here once scouts start submitting reports.
-        </p>
-      </div>
-    );
-  }
+const emptyStateMessage = players.length === 0
+  ? "No players yet"
+  : "No players found";
 
+const emptyStateDescription = players.length === 0
+  ? "Players will appear here once scouts start submitting reports."
+  : "Try adjusting your search or filters to find what you're looking for.";
+
+if (players.length === 0 && (search || positionFilter !== "all" || clubFilter !== "all")) {
+  // Show empty state when filters are applied but no results
   return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search by player name..."
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select
+          value={positionFilter}
+          onChange={(e) => onPositionFilterChange(e.target.value)}
+          className="w-full sm:w-48"
+        >
+          <option value="all">All positions</option>
+          <option value="GK">GK</option>
+          <option value="DEF">DEF</option>
+          <option value="MID">MID</option>
+          <option value="FWD">FWD</option>
+        </Select>
+        <Select
+          value={clubFilter}
+          onChange={(e) => onClubFilterChange(e.target.value)}
+          className="w-full sm:w-48"
+        >
+          <option value="all">All clubs</option>
+          {uniqueClubs.map((club) => (
+            <option key={club} value={club}>
+              {club}
+            </option>
+          ))}
+        </Select>
+      </div>
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold text-gray-900">{emptyStateMessage}</h3>
+        <p className="text-gray-500 mt-2">{emptyStateDescription}</p>
+      </div>
+    </div>
+  );
+}
+
+if (players.length === 0) {
+  return (
+    <div className="text-center py-12">
+      <h3 className="text-lg font-semibold text-gray-900">{emptyStateMessage}</h3>
+      <p className="text-gray-500 mt-2">{emptyStateDescription}</p>
+    </div>
+  );
+}
+
+return (
+  <div className="space-y-4">
+    <div className="flex flex-col sm:flex-row gap-4">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          type="text"
+          placeholder="Search by player name..."
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+      <Select
+        value={positionFilter}
+        onChange={(e) => onPositionFilterChange(e.target.value)}
+        className="w-full sm:w-48"
+      >
+        <option value="all">All positions</option>
+        <option value="GK">GK</option>
+        <option value="DEF">DEF</option>
+        <option value="MID">MID</option>
+        <option value="FWD">FWD</option>
+      </Select>
+      <Select
+        value={clubFilter}
+        onChange={(e) => onClubFilterChange(e.target.value)}
+        className="w-full sm:w-48"
+      >
+        <option value="all">All clubs</option>
+        {uniqueClubs.map((club) => (
+          <option key={club} value={club}>
+            {club}
+          </option>
+        ))}
+      </Select>
+    </div>
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
@@ -186,5 +292,6 @@ export function PlayerList({
         </tbody>
       </table>
     </div>
-  );
+  </div>
+);
 }
