@@ -1,101 +1,145 @@
-import { promises as fs } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { join } from "node:path";
-import type { Player, NewPlayer, Report, NewReport, Scout, NewScout } from "./types.js";
+import type { InValue } from "@libsql/client";
+import { getDb } from "./db.js";
+import type { Player, NewPlayer, Report, NewReport, Scout, NewScout, PositionGroup, Position, PreferredFoot, AttributeScore } from "./types.js";
 import { playerSchema, reportSchema, scoutSchema } from "./types.js";
 
-const DATA_DIR = join(process.cwd(), "app/data");
-
-// Helper function to check for ENOENT errors
-function isNotFound(error: unknown): boolean {
-  return error instanceof Error && 'code' in error && error.code === 'ENOENT';
+function rowToPlayer(row: Record<string, unknown>): Player {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    dateOfBirth: row.date_of_birth as string,
+    positionGroup: row.position_group as PositionGroup,
+    position: row.position as Position,
+    club: row.club as string,
+    nationality: row.nationality as string,
+    preferredFoot: row.preferred_foot as PreferredFoot,
+    height: (row.height as number) ?? undefined,
+    weight: (row.weight as number) ?? undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
-// Player functions
+function rowToReport(row: Record<string, unknown>): Report {
+  return {
+    id: row.id as string,
+    playerId: row.player_id as string,
+    scoutId: row.scout_id as string,
+    matchDate: row.match_date as string,
+    opponent: row.opponent as string,
+    competition: row.competition as string,
+    matchResult: (row.match_result as string) ?? undefined,
+    physical: {
+      pace: row.physical_pace as AttributeScore,
+      strength: row.physical_strength as AttributeScore,
+      stamina: row.physical_stamina as AttributeScore,
+      agility: row.physical_agility as AttributeScore,
+    },
+    technical: {
+      finishing: row.technical_finishing as AttributeScore,
+      passing: row.technical_passing as AttributeScore,
+      dribbling: row.technical_dribbling as AttributeScore,
+      firstTouch: row.technical_first_touch as AttributeScore,
+    },
+    tactical: {
+      positioning: row.tactical_positioning as AttributeScore,
+      awareness: row.tactical_awareness as AttributeScore,
+      decisionMaking: row.tactical_decision_making as AttributeScore,
+      workRate: row.tactical_work_rate as AttributeScore,
+    },
+    matchNotes: {
+      attitude: row.match_notes_attitude as AttributeScore,
+      coachability: row.match_notes_coachability as AttributeScore,
+      intensity: row.match_notes_intensity as AttributeScore,
+      impact: row.match_notes_impact as AttributeScore,
+      notes: (row.match_notes_notes as string) ?? undefined,
+    },
+    status: row.status as "draft" | "submitted",
+    currentStep: row.current_step as number,
+    createdAt: row.created_at as string,
+    updatedAt: (row.updated_at as string) ?? undefined,
+  };
+}
+
+function rowToScout(row: Record<string, unknown>): Scout {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    createdAt: row.created_at as string,
+  };
+}
+
 export async function getPlayers(): Promise<Player[]> {
-  try {
-    const content = await fs.readFile(join(DATA_DIR, "players.json"), "utf-8");
-    const players = JSON.parse(content);
-    return players.map((p: unknown) => playerSchema.parse(p));
-  } catch (error) {
-    if (isNotFound(error)) {
-      return []; // File doesn't exist yet - OK to return empty
-    }
-    // Re-throw data corruption, permission, or parsing errors
-    throw new Error(`Failed to read players.json: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM players ORDER BY name ASC");
+  return result.rows.map(rowToPlayer);
 }
 
 export async function getPlayerById(id: string): Promise<Player | null> {
-  const players = await getPlayers();
-  const player = players.find((p) => p.id === id);
-  return player || null;
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM players WHERE id = ?", [id]);
+  if (result.rows.length === 0) return null;
+  return rowToPlayer(result.rows[0]);
 }
 
-// WR-02: Race condition in concurrent write operations - not atomic
-// TODO: Implement file locking for concurrent writes
 export async function createPlayer(input: NewPlayer): Promise<Player> {
-  const players = await getPlayers();
   const newPlayer: Player = {
     ...input,
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
-  
+
   playerSchema.parse(newPlayer);
-  
-  players.push(newPlayer);
-  // WR-01: Validate entire array before write to catch data corruption
-  playerSchema.array().parse(players);
-  await fs.writeFile(
-    join(DATA_DIR, "players.json"),
-    JSON.stringify(players, null, 2),
-    "utf-8"
+
+  const db = await getDb();
+  const result = await db.execute(
+    `INSERT INTO players (id, name, date_of_birth, position_group, position, club, nationality, preferred_foot, height, weight, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
+    [
+      newPlayer.id,
+      newPlayer.name,
+      newPlayer.dateOfBirth,
+      newPlayer.positionGroup,
+      newPlayer.position,
+      newPlayer.club,
+      newPlayer.nationality,
+      newPlayer.preferredFoot,
+      newPlayer.height ?? null,
+      newPlayer.weight ?? null,
+      newPlayer.createdAt,
+    ]
   );
-  
-  return newPlayer;
+
+  return rowToPlayer(result.rows[0]);
 }
 
-// Report functions
 export async function getReports(): Promise<Report[]> {
-  try {
-    const content = await fs.readFile(join(DATA_DIR, "reports.json"), "utf-8");
-    const reports = JSON.parse(content);
-    return reports.map((r: unknown) => reportSchema.parse(r));
-  } catch (error) {
-    if (isNotFound(error)) {
-      return []; // File doesn't exist yet - OK to return empty
-    }
-    // Re-throw data corruption, permission, or parsing errors
-    throw new Error(`Failed to read reports.json: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM reports ORDER BY created_at DESC");
+  return result.rows.map(rowToReport);
 }
 
 export async function getReportsByPlayer(playerId: string): Promise<Report[]> {
-  const reports = await getReports();
-  return reports.filter((r) => r.playerId === playerId);
-}
-
-// Helper function to write reports to file
-export async function writeReports(reports: Report[]): Promise<void> {
-  await fs.writeFile(
-    join(DATA_DIR, "reports.json"),
-    JSON.stringify(reports, null, 2),
-    "utf-8"
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM reports WHERE player_id = ? ORDER BY match_date DESC",
+    [playerId]
   );
+  return result.rows.map(rowToReport);
 }
 
-// WR-02: Race condition in concurrent write operations - not atomic
-// WR-03: Foreign key validation uses stale data (TOCTOU vulnerability)
-// TODO: Use transaction to ensure referential integrity
 export async function createReport(input: NewReport): Promise<Report> {
-  const player = await getPlayerById(input.playerId);
-  if (!player) {
+  const db = await getDb();
+
+  // Verify player exists
+  const playerCheck = await db.execute("SELECT id FROM players WHERE id = ?", [input.playerId]);
+  if (playerCheck.rows.length === 0) {
     throw new Error(`Player not found: ${input.playerId}`);
   }
 
-  const scout = await getScoutById(input.scoutId);
-  if (!scout) {
+  // Verify scout exists
+  const scoutCheck = await db.execute("SELECT id FROM scouts WHERE id = ?", [input.scoutId]);
+  if (scoutCheck.rows.length === 0) {
     throw new Error(`Scout not found: ${input.scoutId}`);
   }
 
@@ -110,166 +154,200 @@ export async function createReport(input: NewReport): Promise<Report> {
 
   reportSchema.parse(newReport);
 
-  const reports = await getReports();
-  reports.push(newReport);
-  // WR-01: Validate entire array before write to catch data corruption
-  reportSchema.array().parse(reports);
-  await writeReports(reports);
+  const result = await db.execute(
+    `INSERT INTO reports (
+      id, player_id, scout_id, match_date, opponent, competition, match_result,
+      physical_pace, physical_strength, physical_stamina, physical_agility,
+      technical_finishing, technical_passing, technical_dribbling, technical_first_touch,
+      tactical_positioning, tactical_awareness, tactical_decision_making, tactical_work_rate,
+      match_notes_attitude, match_notes_coachability, match_notes_intensity, match_notes_impact, match_notes_notes,
+      status, current_step, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
+    [
+      newReport.id, newReport.playerId, newReport.scoutId,
+      newReport.matchDate, newReport.opponent, newReport.competition, newReport.matchResult ?? null,
+      newReport.physical.pace, newReport.physical.strength, newReport.physical.stamina, newReport.physical.agility,
+      newReport.technical.finishing, newReport.technical.passing, newReport.technical.dribbling, newReport.technical.firstTouch,
+      newReport.tactical.positioning, newReport.tactical.awareness, newReport.tactical.decisionMaking, newReport.tactical.workRate,
+      newReport.matchNotes.attitude, newReport.matchNotes.coachability, newReport.matchNotes.intensity, newReport.matchNotes.impact, newReport.matchNotes.notes ?? null,
+      newReport.status, newReport.currentStep, newReport.createdAt, newReport.updatedAt ?? null,
+    ]
+  );
 
-  return newReport;
+  return rowToReport(result.rows[0]);
 }
 
-// Get draft report by scout ID
 export async function getDraftByScout(scoutId: string): Promise<Report | null> {
-  const reports = await getReports();
-  const draft = reports.find((r) => r.scoutId === scoutId && r.status === "draft");
-  return draft || null;
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM reports WHERE scout_id = ? AND status = 'draft' LIMIT 1",
+    [scoutId]
+  );
+  if (result.rows.length === 0) return null;
+  return rowToReport(result.rows[0]);
 }
 
-// Upsert draft (create or update)
 export async function upsertDraft(data: NewReport): Promise<Report> {
-  const reports = await getReports();
-  const existingDraft = reports.find(
-    (r) => r.scoutId === data.scoutId && r.status === "draft"
+  const db = await getDb();
+
+  const existing = await db.execute(
+    "SELECT * FROM reports WHERE scout_id = ? AND status = 'draft' LIMIT 1",
+    [data.scoutId]
   );
 
-  if (existingDraft) {
-    // Update existing draft
-    const updated: Report = {
-      ...existingDraft,
-      ...data,
-      updatedAt: new Date().toISOString(),
-    };
-    const index = reports.findIndex((r) => r.id === existingDraft.id);
-    reports[index] = updated;
-    await writeReports(reports);
-    return updated;
-  } else {
-    // Create new draft
-    const newReport: Report = {
-      ...data,
-      id: randomUUID(),
-      status: "draft",
-      currentStep: data.currentStep ?? 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    reports.push(newReport);
-    await writeReports(reports);
-    return newReport;
+  if (existing.rows.length > 0) {
+    const existingId = existing.rows[0].id as string;
+    const now = new Date().toISOString();
+
+    const result = await db.execute(
+      `UPDATE reports SET
+        player_id = ?, match_date = ?, opponent = ?, competition = ?, match_result = ?,
+        physical_pace = ?, physical_strength = ?, physical_stamina = ?, physical_agility = ?,
+        technical_finishing = ?, technical_passing = ?, technical_dribbling = ?, technical_first_touch = ?,
+        tactical_positioning = ?, tactical_awareness = ?, tactical_decision_making = ?, tactical_work_rate = ?,
+        match_notes_attitude = ?, match_notes_coachability = ?, match_notes_intensity = ?, match_notes_impact = ?, match_notes_notes = ?,
+        current_step = ?, updated_at = ?
+      WHERE id = ? RETURNING *`,
+      [
+        data.playerId, data.matchDate, data.opponent, data.competition, data.matchResult ?? null,
+        data.physical.pace, data.physical.strength, data.physical.stamina, data.physical.agility,
+        data.technical.finishing, data.technical.passing, data.technical.dribbling, data.technical.firstTouch,
+        data.tactical.positioning, data.tactical.awareness, data.tactical.decisionMaking, data.tactical.workRate,
+        data.matchNotes.attitude, data.matchNotes.coachability, data.matchNotes.intensity, data.matchNotes.impact, data.matchNotes.notes ?? null,
+        data.currentStep ?? 0, now,
+        existingId,
+      ]
+    );
+
+    return rowToReport(result.rows[0]);
   }
+
+  const newReport: Report = {
+    ...data,
+    id: randomUUID(),
+    status: "draft",
+    currentStep: data.currentStep ?? 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  reportSchema.parse(newReport);
+
+  const result = await db.execute(
+    `INSERT INTO reports (
+      id, player_id, scout_id, match_date, opponent, competition, match_result,
+      physical_pace, physical_strength, physical_stamina, physical_agility,
+      technical_finishing, technical_passing, technical_dribbling, technical_first_touch,
+      tactical_positioning, tactical_awareness, tactical_decision_making, tactical_work_rate,
+      match_notes_attitude, match_notes_coachability, match_notes_intensity, match_notes_impact, match_notes_notes,
+      status, current_step, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
+    [
+      newReport.id, newReport.playerId, newReport.scoutId,
+      newReport.matchDate, newReport.opponent, newReport.competition, newReport.matchResult ?? null,
+      newReport.physical.pace, newReport.physical.strength, newReport.physical.stamina, newReport.physical.agility,
+      newReport.technical.finishing, newReport.technical.passing, newReport.technical.dribbling, newReport.technical.firstTouch,
+      newReport.tactical.positioning, newReport.tactical.awareness, newReport.tactical.decisionMaking, newReport.tactical.workRate,
+      newReport.matchNotes.attitude, newReport.matchNotes.coachability, newReport.matchNotes.intensity, newReport.matchNotes.impact, newReport.matchNotes.notes ?? null,
+      newReport.status, newReport.currentStep, newReport.createdAt, newReport.updatedAt ?? null,
+    ]
+  );
+
+  return rowToReport(result.rows[0]);
 }
 
-// Submit draft (change status from draft to submitted)
 export async function submitDraft(reportId: string): Promise<Report> {
-  const reports = await getReports();
-  const report = reports.find((r) => r.id === reportId);
-  if (!report) throw new Error("Report not found");
+  const db = await getDb();
+  const now = new Date().toISOString();
 
-  report.status = "submitted";
-  report.updatedAt = new Date().toISOString();
-
-  await writeReports(reports);
-  return report;
-}
-
-// Delete draft
-export async function deleteDraft(reportId: string): Promise<void> {
-  const reports = await getReports();
-  const filtered = reports.filter(
-    (r) => r.id !== reportId || r.status !== "draft"
+  const result = await db.execute(
+    "UPDATE reports SET status = 'submitted', updated_at = ? WHERE id = ? RETURNING *",
+    [now, reportId]
   );
-  if (filtered.length !== reports.length) {
-    await writeReports(filtered);
+
+  if (result.rows.length === 0) {
+    throw new Error("Report not found");
   }
+
+  return rowToReport(result.rows[0]);
 }
 
-// Get reports by scout (optionally filtered by status)
+export async function deleteDraft(reportId: string): Promise<void> {
+  const db = await getDb();
+  await db.execute(
+    "DELETE FROM reports WHERE id = ? AND status = 'draft'",
+    [reportId]
+  );
+}
+
 export async function getReportsByScout(
   scoutId: string,
   status?: "draft" | "submitted"
 ): Promise<Report[]> {
-  const reports = await getReports();
-  return reports.filter((r) => {
-    if (r.scoutId !== scoutId) return false;
-    if (status && r.status !== status) return false;
-    return true;
-  });
+  const db = await getDb();
+  let sql: string;
+  let params: InValue[];
+
+  if (status) {
+    sql = "SELECT * FROM reports WHERE scout_id = ? AND status = ? ORDER BY created_at DESC";
+    params = [scoutId, status];
+  } else {
+    sql = "SELECT * FROM reports WHERE scout_id = ? ORDER BY created_at DESC";
+    params = [scoutId];
+  }
+
+  const result = await db.execute(sql, params);
+  return result.rows.map(rowToReport);
 }
 
-// Scout functions
 export async function getScouts(): Promise<Scout[]> {
-  try {
-    const content = await fs.readFile(join(DATA_DIR, "scouts.json"), "utf-8");
-    const scouts = JSON.parse(content);
-    return scouts.map((s: unknown) => scoutSchema.parse(s));
-  } catch (error) {
-    if (isNotFound(error)) {
-      return []; // File doesn't exist yet - OK to return empty
-    }
-    // Re-throw data corruption, permission, or parsing errors
-    throw new Error(`Failed to read scouts.json: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM scouts ORDER BY name ASC");
+  return result.rows.map(rowToScout);
 }
 
 export async function getScoutById(id: string): Promise<Scout | null> {
-  const scouts = await getScouts();
-  const scout = scouts.find((s) => s.id === id);
-  return scout || null;
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM scouts WHERE id = ?", [id]);
+  if (result.rows.length === 0) return null;
+  return rowToScout(result.rows[0]);
 }
 
-// WR-02: Race condition in concurrent write operations - not atomic
 export async function createScout(input: NewScout): Promise<Scout> {
   const newScout: Scout = {
     ...input,
     id: randomUUID(),
     createdAt: new Date().toISOString(),
   };
-  
+
   scoutSchema.parse(newScout);
-  
-  const scouts = await getScouts();
-  scouts.push(newScout);
-  // WR-01: Validate entire array before write to catch data corruption
-  scoutSchema.array().parse(scouts);
-  await fs.writeFile(
-    join(DATA_DIR, "scouts.json"),
-    JSON.stringify(scouts, null, 2),
-    "utf-8"
+
+  const db = await getDb();
+  const result = await db.execute(
+    "INSERT INTO scouts (id, name, created_at) VALUES (?, ?, ?) RETURNING *",
+    [newScout.id, newScout.name, newScout.createdAt]
   );
-  
-  return newScout;
+
+  return rowToScout(result.rows[0]);
 }
 
-/**
- * Get report stats (count + last scouted date) for all players.
- * Used by the player list to populate Reports and Last Scouted columns.
- * Only counts submitted reports, excludes drafts.
- */
 export async function getPlayerReportStats(): Promise<
   Record<string, { count: number; lastScouted: string | null }>
 > {
-  const reports = await getReports();
+  const db = await getDb();
+  const result = await db.execute(
+    `SELECT player_id, COUNT(*) as count, MAX(match_date) as last_scouted
+     FROM reports
+     WHERE status = 'submitted'
+     GROUP BY player_id`
+  );
+
   const stats: Record<string, { count: number; lastScouted: string | null }> = {};
-
-  for (const report of reports) {
-    // Only count submitted reports (not drafts)
-    if (report.status !== "submitted") continue;
-
-    if (!stats[report.playerId]) {
-      stats[report.playerId] = { count: 0, lastScouted: null };
-    }
-
-    stats[report.playerId].count++;
-
-    // Track most recent match date across all reports for this player
-    if (
-      stats[report.playerId].lastScouted === null ||
-      report.matchDate > stats[report.playerId].lastScouted!
-    ) {
-      stats[report.playerId].lastScouted = report.matchDate;
-    }
+  for (const row of result.rows) {
+    stats[row.player_id as string] = {
+      count: Number(row.count),
+      lastScouted: (row.last_scouted as string) ?? null,
+    };
   }
-
   return stats;
 }
