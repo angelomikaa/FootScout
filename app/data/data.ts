@@ -231,8 +231,6 @@ export async function upsertDraft(data: NewReport): Promise<Report> {
     updatedAt: new Date().toISOString(),
   };
 
-  reportSchema.parse(newReport);
-
   const result = await db.execute(
     `INSERT INTO reports (
       id, player_id, scout_id, match_date, opponent, competition, match_result,
