@@ -24,7 +24,7 @@
 
 - [ ] **BROWSE-01**: Division can view sortable, filterable player list
 - [ ] **BROWSE-02**: Division can search players by name, position, and club
-- [ ] **BROWSE-03**: Division can click from player list into detailed player profile
+- [x] **BROWSE-03**: Division can click from player list into detailed player profile
 - [ ] **BROWSE-04**: Player profile displays identity info, all reports, and visual scores (partial: identity + reports built, scores placeholder pending Phase 6)
 
 ### Scoring & Visualization
@@ -96,7 +96,7 @@
 | SCOUT-04 | Phase 3 | Complete |
 | BROWSE-01 | Phase 4 | Pending |
 | BROWSE-02 | Phase 4 | Pending |
-| BROWSE-03 | Phase 5 | Pending |
+| BROWSE-03 | Phase 5 | Complete |
 | BROWSE-04 | Phase 5 | Pending |
 | SCORE-01 | Phase 6 | Pending |
 | SCORE-02 | Phase 6 | Pending |

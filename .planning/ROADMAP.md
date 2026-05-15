@@ -90,7 +90,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Create profile route, IdentityCard, ReportCard, AttributeGrid, ScorePlaceholder components
-- [ ] 05-02-PLAN.md — Wire player list with clickable Links, real report counts, and last scouted dates
+- [x] 05-02-PLAN.md — Wire player list with clickable Links, real report counts, and last scouted dates
 
 ### Phase 6: Simple Scoring & Radar
 **Goal**: Player profiles show visual score profiles based on simple averages across all scout reports
@@ -132,7 +132,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Scout Report Form | 3/3 | Complete | 2026-05-13 |
 | 3. Draft & Report Management | 3/3 | Complete | 2026-05-13 |
 | 4. Player List & Search | 2/2 | Complete | 2026-05-14 |
-| 5. Player Profile | 1/2 | In progress | - |
+| 5. Player Profile | 2/2 | Complete | 2026-05-14 |
 | 6. Simple Scoring & Radar | 0/TBD | Not started | - |
 | 7. Ponderated Scoring & Breakdown | 0/TBD | Not started | - |
 | 8. Player Comparison | 0/TBD | Not started | - |

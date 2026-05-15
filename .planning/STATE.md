@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-05-11)
 ## Current Position
 
 Phase: 5 of 8 (Player Profile)
-Plan: 1 of 2 in current phase
-Status: ✓ Plan 05-01 complete — Profile route, IdentityCard, ReportCard, AttributeGrid, ScorePlaceholder built
-Last activity: 2026-05-14 — Plan 05-01 completed: profile route with loader, 404 boundary, report cards with attribute grids
+Plan: 2 of 2 in current phase
+Status: ✓ Plan 05-02 complete — Player list wired with profile links and real report stats
+Last activity: 2026-05-14 — Plan 05-02 completed: clickable player names linking to profile, real report count and last scouted dates
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 63%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: ~1.3 hours
-- Total execution time: ~7.9 hours
+- Total plans completed: 8
+- Average duration: ~1.1 hours
+- Total execution time: ~8.1 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [█████░░░░░] 50%
 | 2 | 3 | 3 | ~1.5 hours |
 | 3 | 3 | 3 | ~1.5 hours |
 | 4 | 2 | 2 | ~1 hour |
-| 5 | 1 | 1 | ~10 min |
+| 5 | 2 | 2 | ~10 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 plans completed
+- Last 5 plans: 7 plans completed
 - Trend: Accelerating
 
 *Updated after each plan completion*
@@ -79,5 +79,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-05-14
-Stopped at: Plan 05-01 complete — Profile route, IdentityCard, ReportCard, AttributeGrid, ScorePlaceholder built
-Resume file: .planning/phases/05-player-profile/05-01-SUMMARY.md
+Stopped at: Plan 05-02 complete — Player list wired with profile links and real report stats
+Resume file: .planning/phases/05-player-profile/05-02-SUMMARY.md
