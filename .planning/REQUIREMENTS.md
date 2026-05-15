@@ -85,27 +85,27 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
-| DATA-05 | Phase 1 | Pending |
-| SCOUT-01 | Phase 2 | Pending |
-| SCOUT-02 | Phase 2 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
+| DATA-04 | Phase 1 | Complete |
+| DATA-05 | Phase 1 | Complete |
+| SCOUT-01 | Phase 2 | Complete |
+| SCOUT-02 | Phase 2 | Complete |
 | SCOUT-03 | Phase 3 | Complete |
 | SCOUT-04 | Phase 3 | Complete |
-| BROWSE-01 | Phase 4 | Pending |
-| BROWSE-02 | Phase 4 | Pending |
+| BROWSE-01 | Phase 4 | Complete |
+| BROWSE-02 | Phase 4 | Complete |
 | BROWSE-03 | Phase 5 | Complete |
-| BROWSE-04 | Phase 5 | Pending |
-| SCORE-01 | Phase 6 | Pending |
-| SCORE-02 | Phase 6 | Pending |
-| SCORE-03 | Phase 7 | Pending |
-| SCORE-04 | Phase 7 | Pending |
-| SCORE-05 | Phase 7 | Pending |
-| COMP-01 | Phase 8 | Pending |
-| COMP-02 | Phase 8 | Pending |
-| COMP-03 | Phase 8 | Pending |
+| BROWSE-04 | Phase 5 | Complete |
+| SCORE-01 | Phase 6 | Complete |
+| SCORE-02 | Phase 6 | Complete |
+| SCORE-03 | Phase 7 | Complete |
+| SCORE-04 | Phase 7 | Complete |
+| SCORE-05 | Phase 7 | Complete |
+| COMP-01 | Phase 8 | Complete |
+| COMP-02 | Phase 8 | Complete |
+| COMP-03 | Phase 8 | Complete |
 
 **Coverage:**
 - v1 requirements: 21 total

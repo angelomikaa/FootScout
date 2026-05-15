@@ -3,7 +3,7 @@ import { redirect } from "react-router";
 import { getPlayers, getScouts, createPlayer, createReport, upsertDraft, submitDraft, deleteDraft, getDraftByScout, getSubmittedReportByPlayerScoutDate } from "~/data/data";
 import { reportFormSchema } from "~/data/form-schema";
 import { ScoutReportForm } from "~/components/scout-report-form";
-import { getScoutIdFromCookie } from "~/cookies.server";
+import { getScoutIdFromCookie, setScoutIdCookie } from "~/cookies.server";
 import type { NewReport } from "~/data/types";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -69,7 +69,11 @@ notes: (formData.get("matchNotes.notes") as string) || undefined,
 };
 
 await upsertDraft(reportData);
-return { success: true };
+
+const cookieHeader = await setScoutIdCookie(reportData.scoutId);
+return new Response(JSON.stringify({ success: true }), {
+  headers: { "Set-Cookie": cookieHeader, "Content-Type": "application/json" },
+});
 }
 
 if (intent === "delete-draft") {
@@ -151,14 +155,10 @@ return redirect("/?duplicate=true");
 await createReport(reportData);
 }
 
-return redirect("/?submitted=true");
-}
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Relatório de Observação — FootScout" },
-    { name: "description", content: "Submit a new scout report" },
-  ];
+const cookieHeader = await setScoutIdCookie(reportData.scoutId);
+return redirect("/?submitted=true", {
+  headers: { "Set-Cookie": cookieHeader },
+});
 }
 
 export default function ScoutReportRoute({ loaderData }: Route.ComponentProps) {
