@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Player Profile** - Detailed profile page with identity info, report history, and score displays
 - [x] **Phase 6: Simple Scoring & Radar** - Simple average calculation across reports, radar chart visualization
 - [x] **Phase 7: Ponderated Scoring & Breakdown** - Weight controls, ponderated average, transparent score breakdown with deltas
-- [ ] **Phase 8: Player Comparison** - Side-by-side comparison with radar overlay respecting active weights
+- [x] **Phase 8: Player Comparison** - Side-by-side comparison with radar overlay respecting active weights
 
 ## Phase Details
 
@@ -145,4 +145,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 5. Player Profile | 2/2 | Complete | 2026-05-14 |
 | 6. Simple Scoring & Radar | 2/2 | Complete | 2026-05-15 |
 | 7. Ponderated Scoring & Breakdown | 2/2 | Complete | 2026-05-15 |
-| 8. Player Comparison | 0/TBD | Not started | - |
+| 8. Player Comparison | 2/2 | Complete | 2026-05-15 |
