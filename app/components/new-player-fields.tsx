@@ -15,7 +15,11 @@ const positionOptions = [
   "CDM", "CM", "CAM", "LM", "RM",
   "LW", "RW", "CF", "ST",
 ] as const;
-const preferredFootOptions = ["left", "right", "both"] as const;
+const preferredFootOptions = [
+  { value: "left" as const, label: "Esquerdo" },
+  { value: "right" as const, label: "Direito" },
+  { value: "both" as const, label: "Ambos" },
+];
 
 function FieldError({ message }: { message?: any }) {
   if (!message) return null;
@@ -30,22 +34,22 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
   return (
     <div className="border border-fm-accent/30 dark:border-fm-accent/40 rounded-lg bg-fm-accent/5 dark:bg-fm-accent/10 p-4 mt-4 space-y-3">
       <h3 className="text-sm font-semibold text-fm-accent">
-        New Player Details
+        Novo Jogador
       </h3>
 
       <div>
-        <Label htmlFor="playerName">Player name</Label>
+        <Label htmlFor="playerName">Nome do jogador</Label>
         <Input
           id="playerName"
           type="text"
           {...register("playerName")}
-          placeholder="Player name"
+          placeholder="Nome do jogador"
         />
         <FieldError message={errors.playerName?.message} />
       </div>
 
       <div>
-        <Label htmlFor="playerDateOfBirth">Date of birth</Label>
+        <Label htmlFor="playerDateOfBirth">Data de nascimento</Label>
         <Input
           id="playerDateOfBirth"
           type="date"
@@ -56,12 +60,12 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label htmlFor="playerPositionGroup">Position group</Label>
+          <Label htmlFor="playerPositionGroup">Grupo posicional</Label>
           <Select
             id="playerPositionGroup"
             {...register("playerPositionGroup")}
           >
-            <option value="">Select...</option>
+            <option value="">Selecione...</option>
             {positionGroupOptions.map((pg) => (
               <option key={pg} value={pg}>{pg}</option>
             ))}
@@ -70,12 +74,12 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
         </div>
 
         <div>
-          <Label htmlFor="playerPosition">Position</Label>
+          <Label htmlFor="playerPosition">Posição</Label>
           <Select
             id="playerPosition"
             {...register("playerPosition")}
           >
-            <option value="">Select...</option>
+            <option value="">Selecione...</option>
             {positionOptions.map((pos) => (
               <option key={pos} value={pos}>{pos}</option>
             ))}
@@ -85,23 +89,23 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
       </div>
 
       <div>
-        <Label htmlFor="playerClub">Club</Label>
+        <Label htmlFor="playerClub">Clube</Label>
         <Input
           id="playerClub"
           type="text"
           {...register("playerClub")}
-          placeholder="Club"
+          placeholder="Clube"
         />
         <FieldError message={errors.playerClub?.message} />
       </div>
 
       <div>
-        <Label htmlFor="playerNationality">Nationality</Label>
+        <Label htmlFor="playerNationality">Nacionalidade</Label>
         <Input
           id="playerNationality"
           type="text"
           {...register("playerNationality")}
-          placeholder="Country code (e.g., AR, ES)"
+          placeholder="Código do país (ex.: BR, AR)"
           maxLength={2}
         />
         <FieldError message={errors.playerNationality?.message} />
@@ -109,38 +113,38 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label htmlFor="playerPreferredFoot">Preferred foot</Label>
+          <Label htmlFor="playerPreferredFoot">Pé preferido</Label>
           <Select
             id="playerPreferredFoot"
             {...register("playerPreferredFoot")}
           >
-            <option value="">Select...</option>
+            <option value="">Selecione...</option>
             {preferredFootOptions.map((pf) => (
-              <option key={pf} value={pf}>{pf}</option>
+              <option key={pf.value} value={pf.value}>{pf.label}</option>
             ))}
           </Select>
           <FieldError message={errors.playerPreferredFoot?.message} />
         </div>
 
         <div>
-          <Label htmlFor="playerHeight">Height (cm)</Label>
+          <Label htmlFor="playerHeight">Altura (cm)</Label>
           <Input
             id="playerHeight"
             type="number"
             {...register("playerHeight", { valueAsNumber: true })}
-            placeholder="Height (cm)"
+            placeholder="Altura (cm)"
           />
           <FieldError message={errors.playerHeight?.message} />
         </div>
       </div>
 
       <div>
-        <Label htmlFor="playerWeight">Weight (kg)</Label>
+        <Label htmlFor="playerWeight">Peso (kg)</Label>
         <Input
           id="playerWeight"
           type="number"
           {...register("playerWeight", { valueAsNumber: true })}
-          placeholder="Weight (kg)"
+          placeholder="Peso (kg)"
         />
         <FieldError message={errors.playerWeight?.message} />
       </div>

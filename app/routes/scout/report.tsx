@@ -150,7 +150,7 @@ return redirect("/?submitted=true");
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Scout Report — FootScout" },
+    { title: "Relatório de Observação — FootScout" },
     { name: "description", content: "Submit a new scout report" },
   ];
 }

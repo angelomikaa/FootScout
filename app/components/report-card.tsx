@@ -24,21 +24,21 @@ export function ReportCard({ report, scoutName }: ReportCardProps) {
       <div className="flex items-baseline gap-2 text-sm text-gray-500 dark:text-fm-text-muted mt-0.5">
         <span>{report.competition}</span>
         <span aria-hidden="true">&middot;</span>
-        <span>Scouted by {scoutName}</span>
+        <span>Avaliado por {scoutName}</span>
         {report.matchResult && (
           <>
             <span aria-hidden="true">&middot;</span>
-            <span>Result: {report.matchResult}</span>
+            <span>Resultado: {report.matchResult}</span>
           </>
         )}
       </div>
 
       <div className="space-y-3 mt-4">
-        <AttributeGrid category="Physical" attributes={report.physical} />
-        <AttributeGrid category="Technical" attributes={report.technical} />
-        <AttributeGrid category="Tactical" attributes={report.tactical} />
+        <AttributeGrid category="Físico" attributes={report.physical} />
+        <AttributeGrid category="Técnico" attributes={report.technical} />
+        <AttributeGrid category="Tático" attributes={report.tactical} />
         <AttributeGrid
-          category="Match Notes"
+          category="Anotações"
           attributes={matchNotesAttributes}
           notes={matchNotesText}
         />

@@ -36,10 +36,10 @@ export default function PlayerProfilePage() {
         to="/division/players"
         className="inline-flex items-center text-sm text-fm-accent hover:text-fm-accent-hover mb-6"
       >
-        &larr; Back to players
+        &larr; Voltar aos jogadores
       </Link>
 
-      <h1 className="sr-only">{player.name} &mdash; Player Profile</h1>
+      <h1 className="sr-only">{player.name} &mdash; Perfil do Jogador</h1>
 
       <div className="space-y-8">
         <section>
@@ -49,21 +49,21 @@ export default function PlayerProfilePage() {
         <section>
           <div className="border-t border-gray-200 dark:border-fm-border pt-8">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text mb-4">
-              Scout Reports
+              Relatórios
             </h2>
 
             {reports.length === 0 ? (
               <div className="text-center py-12 bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border">
                 <p className="text-gray-900 dark:text-fm-text font-medium">
-                  No reports yet for this player
+                  Nenhum relatório ainda para este jogador
                 </p>
                 <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-2">
-                  Scouts can submit reports via the&nbsp;
+                  Observadores podem enviar relatórios pela&nbsp;
                   <Link
                     to="/scout/report"
                     className="text-fm-accent hover:text-fm-accent-hover"
                   >
-                    Scout Area
+                    Área do Observador
                   </Link>
                   .
                 </p>
@@ -71,7 +71,7 @@ export default function PlayerProfilePage() {
                   to="/division/players"
                   className="inline-block mt-4 text-sm text-fm-accent hover:text-fm-accent-hover"
                 >
-                  &larr; Back to player list
+                  &larr; Voltar à lista de jogadores
                 </Link>
               </div>
             ) : (
@@ -80,7 +80,7 @@ export default function PlayerProfilePage() {
                   <ReportCard
                     key={report.id}
                     report={report}
-                    scoutName={scoutNames[report.scoutId] || "Unknown Scout"}
+                    scoutName={scoutNames[report.scoutId] || "Observador desconhecido"}
                   />
                 ))}
               </div>
@@ -103,17 +103,17 @@ export function ErrorBoundary() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center py-16">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text">
-          Player not found
+          Jogador não encontrado
         </h1>
         <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-2">
-          The player you&rsquo;re looking for doesn&rsquo;t exist or may have
-          been removed.
+          O jogador que você procura não existe ou pode ter sido
+          removido.
         </p>
         <Link
           to="/division/players"
           className="inline-block mt-6 text-fm-accent hover:text-fm-accent-hover"
         >
-          &larr; Back to player list
+          &larr; Voltar à lista de jogadores
         </Link>
       </div>
     </div>

@@ -9,22 +9,22 @@ export function getFlagEmoji(countryCode: string): string {
 }
 
 const ATTRIBUTE_LABELS: Record<string, string> = {
-  pace: "Pace",
-  strength: "Strength",
-  stamina: "Stamina",
-  agility: "Agility",
-  finishing: "Finishing",
-  passing: "Passing",
-  dribbling: "Dribbling",
-  firstTouch: "First Touch",
-  positioning: "Positioning",
-  awareness: "Awareness",
-  decisionMaking: "Decision Making",
-  workRate: "Work Rate",
-  attitude: "Attitude",
-  coachability: "Coachability",
-  intensity: "Intensity",
-  impact: "Impact",
+  pace: "Velocidade",
+  strength: "Força",
+  stamina: "Resistência",
+  agility: "Agilidade",
+  finishing: "Finalização",
+  passing: "Passe",
+  dribbling: "Drible",
+  firstTouch: "Primeiro Toque",
+  positioning: "Posicionamento",
+  awareness: "Consciência",
+  decisionMaking: "Tomada de Decisão",
+  workRate: "Empenho",
+  attitude: "Atitude",
+  coachability: "Capacidade de Aprendizado",
+  intensity: "Intensidade",
+  impact: "Impacto",
 };
 
 const SKIP_KEYS = new Set(["notes"]);

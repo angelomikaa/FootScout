@@ -10,14 +10,14 @@ export function ReportsTable({ reports, players }: ReportsTableProps) {
   if (reports.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 dark:text-fm-text-secondary">No reports found</p>
+        <p className="text-gray-500 dark:text-fm-text-secondary">Nenhum relatório encontrado</p>
       </div>
     );
   }
 
   const getPlayerName = (playerId: string) => {
     const player = players.find((p) => p.id === playerId);
-    return player?.name || "Unknown Player";
+    return player?.name || "Jogador desconhecido";
   };
 
   return (
@@ -26,22 +26,22 @@ export function ReportsTable({ reports, players }: ReportsTableProps) {
         <thead className="bg-gray-50 dark:bg-fm-card-alt">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Player
+              Jogador
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Match Date
+              Data
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Opponent
+              Adversário
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Competition
+              Competição
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Result
+              Resultado
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
-              Avg Score
+              Média
             </th>
           </tr>
         </thead>

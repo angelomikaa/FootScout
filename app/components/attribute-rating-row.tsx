@@ -34,7 +34,7 @@ export function AttributeRatingRow<T extends FieldValues>({
                       ? "bg-fm-accent text-white shadow-sm"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-fm-card-alt dark:text-fm-text-muted dark:hover:bg-fm-border"
                   )}
-                  aria-label={`Rate ${label} ${rating} out of 5`}
+                  aria-label={`Avaliar ${label} ${rating} de 5`}
                   aria-pressed={value === rating}
                 >
                   {rating}
@@ -49,7 +49,7 @@ export function AttributeRatingRow<T extends FieldValues>({
                     ? "bg-fm-card-alt text-fm-text border-fm-border shadow-sm dark:bg-fm-border dark:text-fm-text"
                     : "bg-white text-gray-500 border-gray-300 hover:bg-gray-50 dark:bg-fm-card-alt dark:text-fm-text-muted dark:border-fm-border dark:hover:bg-fm-border"
                 )}
-                aria-label={`Mark ${label} as not observed`}
+                aria-label={`Marcar ${label} como não observado`}
                 aria-pressed={value === null}
               >
                 N/O

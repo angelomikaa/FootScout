@@ -28,31 +28,31 @@ draft: Report | null;
 }
 
 const physicalAttributes = [
-  { name: "physical.pace" as const, label: "Pace" },
-  { name: "physical.strength" as const, label: "Strength" },
-  { name: "physical.stamina" as const, label: "Stamina" },
-  { name: "physical.agility" as const, label: "Agility" },
+  { name: "physical.pace" as const, label: "Velocidade" },
+  { name: "physical.strength" as const, label: "Força" },
+  { name: "physical.stamina" as const, label: "Resistência" },
+  { name: "physical.agility" as const, label: "Agilidade" },
 ];
 
 const technicalAttributes = [
-  { name: "technical.finishing" as const, label: "Finishing" },
-  { name: "technical.passing" as const, label: "Passing" },
-  { name: "technical.dribbling" as const, label: "Dribbling" },
-  { name: "technical.firstTouch" as const, label: "First Touch" },
+  { name: "technical.finishing" as const, label: "Finalização" },
+  { name: "technical.passing" as const, label: "Passe" },
+  { name: "technical.dribbling" as const, label: "Drible" },
+  { name: "technical.firstTouch" as const, label: "Primeiro Toque" },
 ];
 
 const tacticalAttributes = [
-  { name: "tactical.positioning" as const, label: "Positioning" },
-  { name: "tactical.awareness" as const, label: "Awareness" },
-  { name: "tactical.decisionMaking" as const, label: "Decision Making" },
-  { name: "tactical.workRate" as const, label: "Work Rate" },
+  { name: "tactical.positioning" as const, label: "Posicionamento" },
+  { name: "tactical.awareness" as const, label: "Consciência" },
+  { name: "tactical.decisionMaking" as const, label: "Tomada de Decisão" },
+  { name: "tactical.workRate" as const, label: "Empenho" },
 ];
 
 const matchNotesAttributes = [
-  { name: "matchNotes.attitude" as const, label: "Attitude" },
-  { name: "matchNotes.coachability" as const, label: "Coachability" },
-  { name: "matchNotes.intensity" as const, label: "Intensity" },
-  { name: "matchNotes.impact" as const, label: "Impact" },
+  { name: "matchNotes.attitude" as const, label: "Atitude" },
+  { name: "matchNotes.coachability" as const, label: "Capacidade de Aprendizado" },
+  { name: "matchNotes.intensity" as const, label: "Intensidade" },
+  { name: "matchNotes.impact" as const, label: "Impacto" },
 ];
 
 export function ScoutReportForm({ players, scouts, draft }: ScoutReportFormProps) {
@@ -287,7 +287,7 @@ const draftPlayerName = draft?.playerId
 return (
     <main className="pt-8 pb-8 container mx-auto max-w-xl px-4">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">
-        Scout Report
+        Relatório de Observação
       </h1>
 
 {draft && !hasResumed && (
@@ -305,12 +305,12 @@ onResume={handleResumeDraft}
         {currentStep === 0 && (
           <div className="space-y-4">
         <div>
-          <Label htmlFor="scoutId">Scout</Label>
+          <Label htmlFor="scoutId">Observador</Label>
           <Select
             id="scoutId"
             {...register("scoutId")}
           >
-            <option value="">Select scout...</option>
+            <option value="">Selecione o observador...</option>
             {scouts.map((scout) => (
               <option key={scout.id} value={scout.id}>{scout.name}</option>
             ))}
@@ -331,13 +331,13 @@ onResume={handleResumeDraft}
 
             {isNewPlayer && (
               <div className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-fm-text-muted">
-                <span>Creating new player</span>
+                <span>Criando novo jogador</span>
                 <button
                   type="button"
                   onClick={handleSelectExisting}
                   className="text-fm-accent dark:text-fm-accent hover:underline text-sm"
                 >
-                  Select existing instead
+                  Selecionar existente
                 </button>
               </div>
             )}
@@ -404,7 +404,7 @@ onResume={handleResumeDraft}
 
       <div className="space-y-3 pt-2 border-t border-gray-200 dark:border-fm-border">
         <div>
-          <Label htmlFor="matchDate">Match date</Label>
+          <Label htmlFor="matchDate">Data da partida</Label>
           <Input
             id="matchDate"
             type="date"
@@ -416,12 +416,12 @@ onResume={handleResumeDraft}
         </div>
 
         <div>
-          <Label htmlFor="opponent">Opponent</Label>
+          <Label htmlFor="opponent">Adversário</Label>
           <Input
             id="opponent"
             type="text"
             {...register("opponent")}
-            placeholder="Opponent team"
+            placeholder="Time adversário"
           />
           {errors.opponent && (
             <p className="text-red-500 text-xs mt-1">{errors.opponent.message as string}</p>
@@ -429,12 +429,12 @@ onResume={handleResumeDraft}
         </div>
 
         <div>
-          <Label htmlFor="competition">Competition</Label>
+          <Label htmlFor="competition">Competição</Label>
           <Input
             id="competition"
             type="text"
             {...register("competition")}
-            placeholder="Competition name"
+            placeholder="Nome da competição"
           />
           {errors.competition && (
             <p className="text-red-500 text-xs mt-1">{errors.competition.message as string}</p>
@@ -443,25 +443,25 @@ onResume={handleResumeDraft}
 
         <div>
           <Label htmlFor="matchResult">
-            Match result <span className="text-fm-text-muted">(optional)</span>
+            Resultado <span className="text-fm-text-muted">(opcional)</span>
           </Label>
           <Input
             id="matchResult"
             type="text"
             {...register("matchResult")}
-            placeholder="e.g., 2-1"
+            placeholder="ex.: 2-1"
           />
         </div>
 
         <div>
           <Label htmlFor="matchNotes.notes">
-            Notes <span className="text-fm-text-muted">(optional)</span>
+            Observações <span className="text-fm-text-muted">(opcional)</span>
           </Label>
           <Textarea
             id="matchNotes.notes"
             {...register("matchNotes.notes")}
             rows={3}
-            placeholder="Additional observations..."
+            placeholder="Observações adicionais..."
           />
         </div>
       </div>
@@ -476,7 +476,7 @@ onResume={handleResumeDraft}
             onClick={handleBack}
             className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-fm-label bg-white dark:bg-fm-card-alt border border-gray-300 dark:border-fm-border rounded-lg hover:bg-gray-50 dark:hover:bg-fm-border transition-colors"
           >
-            Back
+            Voltar
           </button>
         ) : (
           <div />
@@ -488,7 +488,7 @@ onResume={handleResumeDraft}
             onClick={handleNext}
             className="px-6 py-2 text-sm font-medium text-white bg-fm-accent rounded-lg hover:bg-fm-accent-hover transition-colors shadow-sm"
           >
-            Next
+            Avançar
           </button>
         ) : (
 <button
@@ -502,14 +502,14 @@ disabled={isSubmitting}
               : "bg-fm-accent hover:bg-fm-accent-hover"
           )}
 >
-{isSubmitting ? "Submitting..." : "Submit Report"}
+{isSubmitting ? "Enviando..." : "Enviar Relatório"}
 </button>
 )
 }
 
 {/* Draft saved indicator */}
 {fetcher.state === "idle" && fetcher.data?.success && (
-        <div className="text-sm text-fm-accent mt-2">Draft saved</div>
+        <div className="text-sm text-fm-accent mt-2">Rascunho salvo</div>
 )}
 </div>
 </main>

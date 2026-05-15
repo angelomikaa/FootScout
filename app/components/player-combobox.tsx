@@ -51,7 +51,7 @@ export function PlayerCombobox({
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div ref={comboboxRef} className="relative">
-          <Label htmlFor="player-search">Player</Label>
+          <Label htmlFor="player-search">Jogador</Label>
           <Input
             id="player-search"
             type="text"
@@ -64,7 +64,7 @@ export function PlayerCombobox({
                 ? `player-option-${filteredPlayers[activeIndex].id}`
                 : undefined
             }
-            placeholder="Search player by name..."
+            placeholder="Buscar jogador pelo nome..."
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
@@ -142,7 +142,7 @@ export function PlayerCombobox({
                   )}
                   onClick={() => onSelectNew(inputValue)}
                 >
-                  Create &ldquo;{inputValue}&rdquo; as new player
+                  Criar &ldquo;{inputValue}&rdquo; como novo jogador
                 </li>
               )}
             </ul>

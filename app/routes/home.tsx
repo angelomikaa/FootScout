@@ -22,7 +22,7 @@ export default function Home() {
             Foot<span className="text-fm-accent">Scout</span>
           </h1>
           <p className="text-fm-text-secondary mt-1">
-            U15 Youth Player Scouting Dashboard
+            Painel de Observação de Jogadores Sub-15
           </p>
         </div>
       </header>
@@ -49,12 +49,12 @@ export default function Home() {
         )}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-4">
-            Project Status
+            Status do Projeto
           </h2>
           <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-6">
             <p className="text-gray-600 dark:text-fm-text-secondary mb-4">
-              Building a comprehensive scouting platform for U15 youth prospect tracking.
-              Scouts enter detailed player observations; the system produces weighted visual profiles.
+              Plataforma de observação para acompanhamento de jovens prospectos Sub-15.
+              Observadores inserem avaliações detalhadas; o sistema gera perfis visuais ponderados.
             </p>
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
@@ -83,12 +83,12 @@ export default function Home() {
                 <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                Scout Area
+                Área do Observador
               </h3>
             </div>
             <div className="p-6">
               <p className="text-gray-600 dark:text-fm-text-secondary mb-6">
-                Tools for scouts to enter and manage player observations.
+                Ferramentas para observadores inserirem e gerenciarem avaliações de jogadores.
               </p>
               <ul className="space-y-4">
                 <li>
@@ -99,10 +99,10 @@ export default function Home() {
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          New Report
+                          Novo Relatório
                         </h4>
                         <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          Create a new scout report with staged form
+                          Criar um novo relatório de observação com formulário em etapas
                         </p>
                       </div>
                       <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,10 +119,10 @@ export default function Home() {
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          My Reports
+                          Meus Relatórios
                         </h4>
                         <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          View and manage your submitted reports
+                          Visualizar e gerenciar seus relatórios enviados
                         </p>
                       </div>
                       <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,12 +141,12 @@ export default function Home() {
                 <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
                 </svg>
-                Division Area
+                Área da Divisão
               </h3>
             </div>
             <div className="p-6">
               <p className="text-gray-600 dark:text-fm-text-secondary mb-6">
-                Browse, search, and evaluate players for the scouting division.
+                Navegue, busque e avalie jogadores para a divisão de observação.
               </p>
               <ul className="space-y-4">
                 <li>
@@ -157,10 +157,10 @@ export default function Home() {
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          Player List
+                          Lista de Jogadores
                         </h4>
                         <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          Browse all players with search and filters
+                          Navegue por todos os jogadores com busca e filtros
                         </p>
                       </div>
                       <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,19 +176,19 @@ export default function Home() {
 
         <div className="mt-12 bg-fm-accent/5 dark:bg-fm-accent/10 rounded-lg p-6 border border-fm-accent/20 dark:border-fm-accent/30">
           <h3 className="text-lg font-semibold text-fm-accent mb-2">
-            Core Feature: Weighted Scoring Engine
-          </h3>
-          <p className="text-gray-700 dark:text-fm-text-secondary">
-            Ponderated averages from 1 to 5 that shift based on what the division is looking for,
-            with transparent breakdowns showing why a player's score rises or falls.
-          </p>
+          Funcionalidade Principal: Motor de Pontuação Ponderada
+        </h3>
+        <p className="text-gray-700 dark:text-fm-text-secondary">
+          Médias ponderadas de 1 a 5 que se ajustam conforme o que a divisão procura,
+          com detalhamentos transparentes mostrando por que a pontuação de um jogador sobe ou desce.
+        </p>
         </div>
       </main>
 
       <footer className="bg-gray-100 dark:bg-fm-card border-t border-gray-200 dark:border-fm-border mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-center text-sm text-gray-500 dark:text-fm-text-muted">
-            FootScout — U15 Youth Scouting Platform
+            FootScout — Plataforma de Observação Sub-15
           </p>
         </div>
       </footer>

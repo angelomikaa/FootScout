@@ -30,10 +30,10 @@ export function DraftBanner({ draft, playerName, onDiscard, onResume }: DraftBan
         </div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
-            Unsaved Draft
+            Rascunho não salvo
           </h3>
           <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-400">
-            You have an unsaved draft for <span className="font-semibold">{playerName}</span> from {new Date(draft.matchDate).toLocaleDateString()}.
+            Você tem um rascunho não salvo para <span className="font-semibold">{playerName}</span> de {new Date(draft.matchDate).toLocaleDateString()}.
           </p>
           <div className="mt-3 flex gap-3">
             <button
@@ -41,7 +41,7 @@ export function DraftBanner({ draft, playerName, onDiscard, onResume }: DraftBan
               onClick={onResume}
               className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-offset-fm-bg"
             >
-              Resume
+              Continuar
             </button>
             <button
               type="button"
@@ -49,7 +49,7 @@ export function DraftBanner({ draft, playerName, onDiscard, onResume }: DraftBan
               disabled={isPending}
               className="inline-flex items-center px-3 py-1.5 border border-yellow-300 dark:border-yellow-700 text-xs font-medium rounded text-yellow-700 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-offset-fm-bg disabled:opacity-50"
             >
-              {isPending ? "Discarding..." : "Discard"}
+              {isPending ? "Descartando..." : "Descartar"}
             </button>
           </div>
         </div>

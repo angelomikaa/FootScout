@@ -118,12 +118,12 @@ export function PlayerList({
   };
 
   const emptyStateMessage = players.length === 0
-    ? "No players yet"
-    : "No players found";
+    ? "Nenhum jogador ainda"
+    : "Nenhum jogador encontrado";
 
   const emptyStateDescription = players.length === 0
-    ? "Players will appear here once scouts start submitting reports."
-    : "Try adjusting your search or filters to find what you're looking for.";
+    ? "Jogadores aparecerão aqui quando os observadores começarem a enviar relatórios."
+    : "Tente ajustar sua busca ou filtros para encontrar o que procura.";
 
   if (players.length === 0 && (search || positionFilter !== "all" || clubFilter !== "all")) {
     return (
@@ -133,7 +133,7 @@ export function PlayerList({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-fm-text-muted" />
             <Input
               type="text"
-              placeholder="Search by player name..."
+              placeholder="Buscar por nome do jogador..."
               value={search}
               onChange={(e) => onSearch(e.target.value)}
               className="pl-9"
@@ -144,7 +144,7 @@ export function PlayerList({
             onChange={(e) => onPositionFilterChange(e.target.value)}
             className="w-full sm:w-48"
           >
-            <option value="all">All positions</option>
+            <option value="all">Todas as posições</option>
             <option value="GK">GK</option>
             <option value="DEF">DEF</option>
             <option value="MID">MID</option>
@@ -155,7 +155,7 @@ export function PlayerList({
             onChange={(e) => onClubFilterChange(e.target.value)}
             className="w-full sm:w-48"
           >
-            <option value="all">All clubs</option>
+            <option value="all">Todos os clubes</option>
             {uniqueClubs.map((club) => (
               <option key={club} value={club}>
                 {club}
@@ -225,37 +225,37 @@ export function PlayerList({
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("player")}
               >
-                Player{renderSortIndicator("player")}
+                Jogador{renderSortIndicator("player")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("position")}
               >
-                Position{renderSortIndicator("position")}
+                Posição{renderSortIndicator("position")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("club")}
               >
-                Club{renderSortIndicator("club")}
+                Clube{renderSortIndicator("club")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("age")}
               >
-                Age{renderSortIndicator("age")}
+                Idade{renderSortIndicator("age")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("reports")}
               >
-                Reports{renderSortIndicator("reports")}
+                Relatórios{renderSortIndicator("reports")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("lastScouted")}
               >
-                Last Scouted{renderSortIndicator("lastScouted")}
+                Última Avaliação{renderSortIndicator("lastScouted")}
               </th>
             </tr>
           </thead>

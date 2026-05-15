@@ -14,11 +14,11 @@ import {
 export const reportFormSchema = z.discriminatedUnion("isNewPlayer", [
   z.object({
     isNewPlayer: z.literal(false),
-    playerId: z.string().min(1, "Select a player"),
-    scoutId: z.string().min(1, "Select a scout"),
+    playerId: z.string().min(1, "Selecione um jogador"),
+    scoutId: z.string().min(1, "Selecione um observador"),
     matchDate: isoDateSchema,
-    opponent: z.string().min(1, "Opponent is required"),
-    competition: z.string().min(1, "Competition is required"),
+    opponent: z.string().min(1, "Adversário é obrigatório"),
+    competition: z.string().min(1, "Competição é obrigatória"),
     matchResult: z.string().optional(),
     physical: physicalAttributesSchema,
     technical: technicalAttributesSchema,
@@ -27,19 +27,19 @@ export const reportFormSchema = z.discriminatedUnion("isNewPlayer", [
   }),
   z.object({
     isNewPlayer: z.literal(true),
-    playerName: z.string().min(1, "Player name is required"),
+    playerName: z.string().min(1, "Nome do jogador é obrigatório"),
     playerDateOfBirth: isoDateSchema,
     playerPositionGroup: positionGroupSchema,
     playerPosition: positionSchema,
-    playerClub: z.string().min(1, "Club is required"),
+    playerClub: z.string().min(1, "Clube é obrigatório"),
     playerNationality: nationalityCodeSchema,
     playerPreferredFoot: preferredFootSchema,
     playerHeight: z.number().int().positive().optional(),
     playerWeight: z.number().int().positive().optional(),
-    scoutId: z.string().min(1, "Select a scout"),
+    scoutId: z.string().min(1, "Selecione um observador"),
     matchDate: isoDateSchema,
-    opponent: z.string().min(1, "Opponent is required"),
-    competition: z.string().min(1, "Competition is required"),
+    opponent: z.string().min(1, "Adversário é obrigatório"),
+    competition: z.string().min(1, "Competição é obrigatória"),
     matchResult: z.string().optional(),
     physical: physicalAttributesSchema,
     technical: technicalAttributesSchema,
@@ -73,11 +73,11 @@ export const STEP_FIELDS = {
 } as const;
 
 export const STEP_LABELS = [
-  "Player & Scout",
-  "Physical",
-  "Technical",
-  "Tactical",
-  "Match Notes",
+  "Jogador e Observador",
+  "Físico",
+  "Técnico",
+  "Tático",
+  "Anotações da Partida",
 ] as const;
 
 export const TOTAL_STEPS = 5;

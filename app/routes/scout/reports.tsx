@@ -25,10 +25,10 @@ export default function ReportsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">My Reports</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">Meus Relatórios</h1>
 
       <div className="mb-6">
-        <Label htmlFor="scout-filter" className="mb-2">Filter by Scout</Label>
+        <Label htmlFor="scout-filter" className="mb-2">Filtrar por Observador</Label>
         <Select
           id="scout-filter"
           defaultValue={scoutId || ""}
@@ -43,7 +43,7 @@ export default function ReportsPage() {
           }}
           className="max-w-xs"
         >
-          <option value="">All Scouts</option>
+          <option value="">Todos os Observadores</option>
           {scouts.map((scout) => (
             <option key={scout.id} value={scout.id}>
               {scout.name}

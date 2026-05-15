@@ -6,10 +6,10 @@ export function ScorePlaceholder() {
     >
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text">
-          Player Scores
+          Pontuações do Jogador
         </h3>
         <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-2">
-          Scoring and radar charts coming in Phase 6
+          Gráficos de pontuação e radar disponíveis na Fase 6
         </p>
       </div>
     </div>

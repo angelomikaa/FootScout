@@ -19,8 +19,14 @@ function calculateAge(dateOfBirth: string): number {
   return age;
 }
 
+const FOOT_LABELS: Record<string, string> = {
+  left: "Esquerdo",
+  right: "Direito",
+  both: "Ambos",
+};
+
 function capitalizeFoot(foot: string): string {
-  return foot.charAt(0).toUpperCase() + foot.slice(1);
+  return FOOT_LABELS[foot] ?? foot;
 }
 
 export function IdentityCard({ player }: IdentityCardProps) {
@@ -47,19 +53,19 @@ export function IdentityCard({ player }: IdentityCardProps) {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
         <DetailItem
-          label="Nationality"
+          label="Nacionalidade"
           value={`${getFlagEmoji(player.nationality)} ${player.nationality}`}
         />
         <DetailItem
-          label="Date of Birth"
-          value={`${player.dateOfBirth} (${age} years old)`}
+          label="Data de Nascimento"
+          value={`${player.dateOfBirth} (${age} anos)`}
         />
-        <DetailItem label="Preferred Foot" value={capitalizeFoot(player.preferredFoot)} />
+        <DetailItem label="Pé Preferido" value={capitalizeFoot(player.preferredFoot)} />
         {player.height !== undefined && (
-          <DetailItem label="Height" value={`${player.height} cm`} />
+          <DetailItem label="Altura" value={`${player.height} cm`} />
         )}
         {player.weight !== undefined && (
-          <DetailItem label="Weight" value={`${player.weight} kg`} />
+          <DetailItem label="Peso" value={`${player.weight} kg`} />
         )}
       </div>
     </div>
