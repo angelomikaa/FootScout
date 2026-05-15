@@ -145,7 +145,7 @@ await submitDraft(existingReportId.toString());
 await createReport(reportData);
 }
 
-return redirect("/scout/report");
+return redirect("/?submitted=true");
 }
 
 export function meta({}: Route.MetaArgs) {

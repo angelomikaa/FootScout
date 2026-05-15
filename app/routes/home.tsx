@@ -1,6 +1,19 @@
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
+import { useEffect } from "react";
 
 export default function Home() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const justSubmitted = searchParams.get("submitted") === "true";
+
+  useEffect(() => {
+    if (justSubmitted) {
+      const timeout = setTimeout(() => {
+        setSearchParams({}, { replace: true });
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [justSubmitted]);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-fm-bg">
       <header className="bg-fm-card dark:bg-fm-card border-b border-fm-border">
@@ -15,6 +28,25 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {justSubmitted && (
+          <div className="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="text-sm text-green-700 dark:text-green-300">
+              Report submitted successfully
+            </p>
+            <button
+              type="button"
+              onClick={() => setSearchParams({}, { replace: true })}
+              className="ml-auto text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-4">
             Project Status
