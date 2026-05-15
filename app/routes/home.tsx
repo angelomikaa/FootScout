@@ -154,26 +154,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
 
-        {draftReports.length > 0 && (
-          <div className="mb-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              <h3 className="font-semibold text-amber-800 dark:text-amber-300">Rascunho Pendente</h3>
-            </div>
-            <p className="text-sm text-amber-700 dark:text-amber-400 mb-3">
-              Você tem {draftReports.length} rascunho não finalizado
-            </p>
-            <Link
-              to="/scout/report"
-              className="inline-flex items-center text-sm font-medium text-amber-800 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-200"
-            >
-              Continuar edição &rarr;
-            </Link>
-          </div>
-        )}
-
         <div className="grid lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
@@ -212,6 +192,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                           </p>
                           <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-0.5">
                             {new Date(report.matchDate).toLocaleDateString("pt-BR")} · {report.opponent}
+                            {(() => {
+                              const p = players.find((pl) => pl.id === report.playerId);
+                              return p ? ` · ${p.club}` : null;
+                            })()}
                           </p>
                         </div>
                         <div className="text-right">
@@ -254,7 +238,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                         </span>
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-fm-text">{player.name}</p>
-                          <p className="text-xs text-gray-500 dark:text-fm-text-muted">{player.position}</p>
+                          <p className="text-xs text-gray-500 dark:text-fm-text-muted">{player.position} · {player.club}</p>
                         </div>
                       </div>
                       <span className="text-sm font-semibold text-gray-900 dark:text-fm-text">
@@ -285,84 +269,136 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Área do Observador
-              </h3>
-            </div>
-            <div className="p-6 space-y-3">
-              <Link
-                to="/scout/report"
-                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                      Novo Relatório
-                    </h4>
-                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                      Formulário em etapas com rascunho automático
-                    </p>
+        <div className="grid lg:grid-cols-5 gap-6 mb-8">
+          <div className="lg:col-span-3">
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+                  <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Área do Observador
+                </h2>
+                <span className="text-xs font-medium text-gray-400 dark:text-fm-text-muted">
+                  {submittedReports.length} relatório{submittedReports.length !== 1 ? "s" : ""} enviado{submittedReports.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="p-6">
+                <Link
+                  to="/scout/report"
+                  className="flex items-center justify-between w-full p-5 rounded-xl bg-fm-accent hover:bg-fm-accent-hover text-white transition-colors group mb-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-base">Novo Relatório</h4>
+                      <p className="text-sm text-white/80">
+                        Avaliar jogador com formulário em etapas
+                      </p>
+                    </div>
                   </div>
-                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
+                </Link>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <Link
+                    to="/scout/reports"
+                    className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Meus Relatórios</h4>
+                      <p className="text-xs text-gray-500 dark:text-fm-text-muted">Ver e filtrar</p>
+                    </div>
+                  </Link>
+
+                  {draftReports.length > 0 ? (
+                    <Link
+                      to="/scout/report"
+                      className="flex items-center gap-3 p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/10 hover:border-amber-300 dark:hover:border-amber-700 transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-amber-800 dark:text-amber-300 group-hover:text-amber-900">Continuar Rascunho</h4>
+                        <p className="text-xs text-amber-600 dark:text-amber-400">{draftReports.length} pendente{draftReports.length > 1 ? "s" : ""}</p>
+                      </div>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border opacity-50">
+                      <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-fm-card-alt flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-gray-400 dark:text-fm-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-400 dark:text-fm-text-muted">Sem Rascunhos</h4>
+                        <p className="text-xs text-gray-400 dark:text-fm-text-muted">Nenhum pendente</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </Link>
-              <Link
-                to="/scout/reports"
-                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                      Meus Relatórios
-                    </h4>
-                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                      Visualizar e filtrar relatórios enviados
-                    </p>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </Link>
+              </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
-                </svg>
-                Área da Divisão
-              </h3>
-            </div>
-            <div className="p-6 space-y-3">
-              <Link
-                to="/division/players"
-                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                      Lista de Jogadores
-                    </h4>
-                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                      Buscar, filtrar e comparar jogadores
-                    </p>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden h-full">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+                  <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
                   </svg>
-                </div>
-              </Link>
+                  Área da Divisão
+                </h2>
+                <span className="text-xs font-medium text-gray-400 dark:text-fm-text-muted">
+                  {players.length} jogador{players.length !== 1 ? "es" : ""}
+                </span>
+              </div>
+              <div className="p-6 space-y-3">
+                <Link
+                  to="/division/players"
+                  className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Lista de Jogadores</h4>
+                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Buscar, filtrar e avaliar</p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/division/players?compare="
+                  className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Comparar Jogadores</h4>
+                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Radar lado a lado com pesos</p>
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
