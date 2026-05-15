@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Player } from "../data/types";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
@@ -5,6 +6,7 @@ import { Search } from "lucide-react";
 
 interface PlayerListProps {
   players: Player[];
+  reportStats: Record<string, { count: number; lastScouted: string | null }>;
   sortBy: string;
   sortDirection: "asc" | "desc";
   onSort: (column: string) => void;
@@ -19,6 +21,7 @@ interface PlayerListProps {
 
 export function PlayerList({
   players,
+  reportStats,
   sortBy,
   sortDirection,
   onSort,
@@ -46,15 +49,14 @@ export function PlayerList({
   };
 
   // Get last scouted date (most recent report date for this player)
-  // For now, we'll use createdAt as placeholder - will be updated in Phase 5
   const getLastScouted = (player: Player): string => {
-    return player.createdAt ? new Date(player.createdAt).toLocaleDateString() : "-";
+    const lastScouted = reportStats[player.id]?.lastScouted;
+    return lastScouted ? new Date(lastScouted).toLocaleDateString() : "-";
   };
 
-  // Get report count (placeholder for now - will be updated in Phase 5)
-  const getReportCount = (_player: Player): number => {
-    // TODO: Phase 5 - count actual reports for this player
-    return 0;
+  // Get report count (actual count from submitted reports)
+  const getReportCount = (player: Player): number => {
+    return reportStats[player.id]?.count ?? 0;
   };
 
   // Sort players based on sortBy and sortDirection
@@ -267,8 +269,13 @@ return (
         <tbody className="bg-white divide-y divide-gray-200">
           {sortedPlayers.map((player) => (
             <tr key={player.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {player.name}
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <Link
+                  to={`/division/players/${player.id}`}
+                  className="text-gray-900 hover:text-blue-600"
+                >
+                  {player.name}
+                </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">

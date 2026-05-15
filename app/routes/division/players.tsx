@@ -1,19 +1,23 @@
 import { useLoaderData, useSearchParams } from "react-router";
-import { getPlayers } from "~/data/data";
+import { getPlayers, getPlayerReportStats } from "~/data/data";
 import { PlayerList } from "~/components/player-list";
 import type { Player } from "~/data/types";
 
 export async function loader() {
-  const players = await getPlayers();
-  return { players };
+  const [players, reportStats] = await Promise.all([
+    getPlayers(),
+    getPlayerReportStats(),
+  ]);
+  return { players, reportStats };
 }
 
 type LoaderData = {
   players: Player[];
+  reportStats: Record<string, { count: number; lastScouted: string | null }>;
 };
 
 export default function PlayersPage() {
-  const { players } = useLoaderData<typeof loader>();
+  const { players, reportStats } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get sort state from URL params, default to createdAt desc
@@ -100,6 +104,7 @@ export default function PlayersPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Players</h1>
       <PlayerList
         players={filteredPlayers}
+        reportStats={reportStats}
         sortBy={sortBy}
         sortDirection={sortDirection}
         onSort={handleSort}
