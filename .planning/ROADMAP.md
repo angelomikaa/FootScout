@@ -110,6 +110,11 @@ Plans:
 2. Player profile shows both the simple average and the ponderated average side by side, so the user sees how weighting shifts the number
 3. A score breakdown displays per-attribute deltas explaining exactly why the ponderated score differs from the simple average — the user never sees a weighted number without understanding its derivation
 **UI hint**: yes
+**Plans**: 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Ponderated scoring engine + weight toggle UI + URL param persistence
+- [ ] 07-02-PLAN.md — Score breakdown accordion + radar overlay + player list weighted sorting
 
 ### Phase 8: Player Comparison
 **Goal**: Division members can compare two players side by side to make relative evaluations for signing or tracking decisions
