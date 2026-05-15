@@ -125,6 +125,11 @@ Plans:
 2. Comparison overlays both players' radar charts so visual shape differences are immediately apparent
 3. Comparison respects the active weight configuration — if ponderated scoring is on, both players' radar charts and scores reflect the same weight adjustments
 **UI hint**: yes
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Comparison route with dual radar overlay + delta table + weight-aware scoring
+- [ ] 08-02-PLAN.md — Player list compare buttons + URL selection state + floating bar
 
 ## Progress
 
