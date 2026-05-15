@@ -17,6 +17,8 @@ interface PlayerListProps {
   clubFilter: string;
   onClubFilterChange: (value: string) => void;
   uniqueClubs: string[];
+  boostedAttrs?: string[];
+  playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
 }
 
 export function PlayerList({
@@ -32,6 +34,8 @@ export function PlayerList({
   clubFilter,
   onClubFilterChange,
   uniqueClubs,
+  boostedAttrs = [],
+  playerWeightedAverages = {},
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);

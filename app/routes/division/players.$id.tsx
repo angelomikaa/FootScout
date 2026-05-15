@@ -1,10 +1,14 @@
 import { useLoaderData, Link } from "react-router";
 import { getPlayerById, getReportsByPlayer, getScouts } from "~/data/data";
+import { calculatePonderatedAverages, parseWeightParams } from "~/lib/scoring/player-average";
 import { IdentityCard } from "~/components/identity-card";
 import { ReportCard } from "~/components/report-card";
-import { ScorePlaceholder } from "~/components/score-placeholder";
+import { AttributeToggle } from "~/components/attribute-toggle";
+import PlayerScores from "~/components/player-scores";
+import type { Route } from "./+types/players.$id";
 
-export async function loader({ params }: { params: { id: string } }) {
+export async function loader({ params, request }: Route.LoaderArgs) {
+  const boostedAttrs = parseWeightParams(request);
   const player = await getPlayerById(params.id);
   if (!player) {
     throw new Response(null, { status: 404, statusText: "Player not found" });
@@ -24,11 +28,13 @@ export async function loader({ params }: { params: { id: string } }) {
     scoutNames[scout.id] = scout.name;
   }
 
-  return { player, reports: submittedReports, scoutNames };
+  const playerAverages = calculatePonderatedAverages(reports, boostedAttrs);
+
+  return { player, reports: submittedReports, scoutNames, playerAverages, boostedAttrs };
 }
 
 export default function PlayerProfilePage() {
-  const { player, reports, scoutNames } = useLoaderData<typeof loader>();
+  const { player, reports, scoutNames, playerAverages, boostedAttrs } = useLoaderData<typeof loader>();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -44,6 +50,13 @@ export default function PlayerProfilePage() {
       <div className="space-y-8">
         <section>
           <IdentityCard player={player} />
+        </section>
+
+        <section>
+          <div className="border-t border-gray-200 dark:border-fm-border pt-8">
+            <AttributeToggle boostedAttrs={boostedAttrs} />
+            <PlayerScores averages={playerAverages} />
+          </div>
         </section>
 
         <section>
@@ -85,12 +98,6 @@ export default function PlayerProfilePage() {
                 ))}
               </div>
             )}
-          </div>
-        </section>
-
-        <section>
-          <div className="border-t border-gray-200 dark:border-fm-border pt-8">
-            <ScorePlaceholder />
           </div>
         </section>
       </div>

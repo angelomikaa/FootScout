@@ -1,28 +1,48 @@
 import { useLoaderData, useSearchParams } from "react-router";
-import { getPlayers, getPlayerReportStats } from "~/data/data";
+import { getPlayers, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
 import { PlayerList } from "~/components/player-list";
+import { AttributeToggle } from "~/components/attribute-toggle";
 import type { Player } from "~/data/types";
+import { parseWeightParams, calculatePonderatedAverages } from "~/lib/scoring/player-average";
+import type { Route } from "./+types/players";
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
+  const boostedAttrs = parseWeightParams(request);
   const [players, reportStats] = await Promise.all([
     getPlayers(),
     getPlayerReportStats(),
   ]);
-  return { players, reportStats };
+
+  let playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>> = {};
+  if (boostedAttrs.length > 0) {
+    for (const player of players) {
+      const reports = await getReportsByPlayer(player.id);
+      playerWeightedAverages[player.id] = calculatePonderatedAverages(reports, boostedAttrs);
+    }
+  }
+
+  return { players, reportStats, boostedAttrs, playerWeightedAverages };
 }
 
 type LoaderData = {
   players: Player[];
   reportStats: Record<string, { count: number; lastScouted: string | null }>;
+  boostedAttrs: string[];
+  playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>>;
 };
 
 export default function PlayersPage() {
-  const { players, reportStats } = useLoaderData<typeof loader>();
+  const { players, reportStats, boostedAttrs, playerWeightedAverages } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get sort state from URL params, default to createdAt desc
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortDirection = (searchParams.get("sortDirection") as "asc" | "desc") || "desc";
+
+  // When weights are active, default sort to weighted score (highest first)
+  const effectiveSortBy = boostedAttrs.length > 0 && sortBy === "createdAt"
+    ? "weightedScore"
+    : sortBy;
 
   // Get search and filter state from URL params
   const search = searchParams.get("search") || "";
@@ -102,10 +122,11 @@ export default function PlayersPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">Jogadores</h1>
+      <AttributeToggle boostedAttrs={boostedAttrs} />
       <PlayerList
         players={filteredPlayers}
         reportStats={reportStats}
-        sortBy={sortBy}
+        sortBy={effectiveSortBy}
         sortDirection={sortDirection}
         onSort={handleSort}
         search={search}
@@ -115,6 +136,8 @@ export default function PlayersPage() {
         clubFilter={clubFilter}
         onClubFilterChange={handleClubFilterChange}
         uniqueClubs={uniqueClubs}
+        boostedAttrs={boostedAttrs}
+        playerWeightedAverages={playerWeightedAverages}
       />
     </div>
   );
