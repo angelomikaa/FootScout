@@ -92,7 +92,7 @@ export function calculatePonderatedAverages(
   for (const key of ATTRIBUTE_KEYS) {
     const value = base.attributes[key];
     if (value === null) continue;
-    const weight = boostedSet.has(key) ? 3 : 1;
+    const weight = boostedSet.has(key) ? 10 : 1;
     ponderatedSum += value * weight;
     ponderatedCount += weight;
   }

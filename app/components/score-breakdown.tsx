@@ -21,7 +21,7 @@ export function ScoreBreakdown({
   const nonNullCount = ATTRIBUTE_KEYS.filter((k) => attributes[k] !== null).length;
   const weightSum = ATTRIBUTE_KEYS.reduce((sum, k) => {
     if (attributes[k] === null) return sum;
-    return sum + (boostedAttrs.includes(k) ? 3 : 1);
+    return sum + (boostedAttrs.includes(k) ? 10 : 1);
   }, 0);
 
   return (
@@ -75,7 +75,7 @@ export function ScoreBreakdown({
                 }
 
                 const simpleContribution = nonNullCount > 0 ? value / nonNullCount : 0;
-                const weight = isBoosted ? 3 : 1;
+                const weight = isBoosted ? 10 : 1;
                 const ponderatedContribution = weightSum > 0 ? (value * weight) / weightSum : 0;
                 const delta = ponderatedContribution - simpleContribution;
 
@@ -110,7 +110,7 @@ export function ScoreBreakdown({
           </table>
           {boostedAttrs.length > 0 && (
             <p className="mt-2 text-xs text-gray-400 dark:text-fm-text-muted">
-              * Atributos com peso 3x
+              * Atributos com peso 10x
             </p>
           )}
         </div>
