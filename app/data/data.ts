@@ -331,6 +331,20 @@ export async function createScout(input: NewScout): Promise<Scout> {
   return rowToScout(result.rows[0]);
 }
 
+export async function getSubmittedReportByPlayerScoutDate(
+  playerId: string, scoutId: string, matchDate: string
+): Promise<Report | null> {
+  const db = await getDb();
+  const result = await db.execute(
+    `SELECT * FROM reports
+     WHERE player_id = ? AND scout_id = ? AND match_date = ? AND status = 'submitted'
+     LIMIT 1`,
+    [playerId, scoutId, matchDate]
+  );
+  if (result.rows.length === 0) return null;
+  return rowToReport(result.rows[0]);
+}
+
 export async function getPlayerReportStats(): Promise<
   Record<string, { count: number; lastScouted: string | null }>
 > {

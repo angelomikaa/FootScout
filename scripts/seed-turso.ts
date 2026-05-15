@@ -55,6 +55,8 @@ async function main() {
       FOREIGN KEY (player_id) REFERENCES players(id),
       FOREIGN KEY (scout_id) REFERENCES scouts(id)
     )`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_reports_unique_submission
+     ON reports (player_id, scout_id, match_date) WHERE status = 'submitted'`,
   ]);
 
   // Seed players

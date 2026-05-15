@@ -1,6 +1,6 @@
 import type { Route } from "./+types/report";
 import { redirect } from "react-router";
-import { getPlayers, getScouts, createPlayer, createReport, upsertDraft, submitDraft, deleteDraft, getDraftByScout } from "~/data/data";
+import { getPlayers, getScouts, createPlayer, createReport, upsertDraft, submitDraft, deleteDraft, getDraftByScout, getSubmittedReportByPlayerScoutDate } from "~/data/data";
 import { reportFormSchema } from "~/data/form-schema";
 import { ScoutReportForm } from "~/components/scout-report-form";
 import { getScoutIdFromCookie } from "~/cookies.server";
@@ -142,6 +142,12 @@ const existingReportId = formData.get("reportId") as string;
 if (existingReportId) {
 await submitDraft(existingReportId.toString());
 } else {
+const duplicate = await getSubmittedReportByPlayerScoutDate(
+reportData.playerId, reportData.scoutId, reportData.matchDate
+);
+if (duplicate) {
+return redirect("/?duplicate=true");
+}
 await createReport(reportData);
 }
 
