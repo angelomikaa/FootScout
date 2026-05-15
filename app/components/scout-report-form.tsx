@@ -301,7 +301,7 @@ onResume={handleResumeDraft}
 
 <StepIndicator currentStep={currentStep} steps={STEP_LABELS} totalSteps={TOTAL_STEPS} />
 
-    <div className="mt-6 rounded-2xl border border-gray-200 dark:border-fm-border bg-white dark:bg-fm-card p-6 space-y-2">
+    <div className="mt-6 rounded-2xl border border-gray-200 dark:border-fm-border bg-white dark:bg-fm-card p-4 sm:p-6 space-y-4 sm:space-y-2">
         {currentStep === 0 && (
           <div className="space-y-4">
         <div>
@@ -469,24 +469,24 @@ onResume={handleResumeDraft}
         )}
       </div>
 
-      <div className="mt-4 flex justify-between">
+      <div className="mt-6 flex flex-col sm:flex-row justify-between gap-3">
         {currentStep > 0 ? (
           <button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-fm-label bg-white dark:bg-fm-card-alt border border-gray-300 dark:border-fm-border rounded-lg hover:bg-gray-50 dark:hover:bg-fm-border transition-colors"
+            className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-gray-700 dark:text-fm-label bg-white dark:bg-fm-card-alt border border-gray-300 dark:border-fm-border rounded-lg hover:bg-gray-50 dark:hover:bg-fm-border transition-colors order-2 sm:order-1"
           >
             Voltar
           </button>
         ) : (
-          <div />
+          <div className="hidden sm:block" />
         )}
 
         {currentStep < TOTAL_STEPS - 1 ? (
           <button
             type="button"
             onClick={handleNext}
-            className="px-6 py-2 text-sm font-medium text-white bg-fm-accent rounded-lg hover:bg-fm-accent-hover transition-colors shadow-sm"
+            className="w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-medium text-white bg-fm-accent rounded-lg hover:bg-fm-accent-hover transition-colors shadow-sm order-1 sm:order-2"
           >
             Avançar
           </button>
@@ -496,7 +496,7 @@ type="button"
 onClick={handleSubmit(onValidSubmit)}
 disabled={isSubmitting}
           className={clsx(
-            "px-6 py-2 text-sm font-medium text-white rounded-lg transition-colors shadow-sm",
+            "w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-medium text-white rounded-lg transition-colors shadow-sm order-1 sm:order-2",
             isSubmitting
               ? "bg-fm-accent/50 cursor-not-allowed"
               : "bg-fm-accent hover:bg-fm-accent-hover"

@@ -21,7 +21,7 @@ export function ReportCard({ report, scoutName }: ReportCardProps) {
         </span>
       </div>
 
-      <div className="flex items-baseline gap-2 text-sm text-gray-500 dark:text-fm-text-muted mt-0.5">
+      <div className="flex items-baseline gap-2 text-sm text-gray-500 dark:text-fm-text-muted mt-0.5 flex-wrap">
         <span>{report.competition}</span>
         <span aria-hidden="true">&middot;</span>
         <span>Avaliado por {scoutName}</span>

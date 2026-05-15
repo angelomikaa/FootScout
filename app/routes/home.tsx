@@ -70,16 +70,16 @@ export default function Home() {
         )}
         <div className="grid md:grid-cols-2 gap-8">
           <section className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+            <div className="bg-gray-100 dark:bg-fm-card-alt px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
                 <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Área do Observador
               </h3>
             </div>
-            <div className="p-6">
-              <p className="text-gray-600 dark:text-fm-text-secondary mb-6">
+            <div className="p-4 sm:p-6">
+              <p className="text-gray-600 dark:text-fm-text-secondary mb-4 sm:mb-6">
                 Ferramentas para observadores inserirem e gerenciarem avaliações de jogadores.
               </p>
               <ul className="space-y-4">
@@ -128,16 +128,16 @@ export default function Home() {
           </section>
 
           <section className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+            <div className="bg-gray-100 dark:bg-fm-card-alt px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
                 <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
                 </svg>
                 Área da Divisão
               </h3>
             </div>
-            <div className="p-6">
-              <p className="text-gray-600 dark:text-fm-text-secondary mb-6">
+            <div className="p-4 sm:p-6">
+              <p className="text-gray-600 dark:text-fm-text-secondary mb-4 sm:mb-6">
                 Navegue, busque e avalie jogadores para a divisão de observação.
               </p>
               <ul className="space-y-4">

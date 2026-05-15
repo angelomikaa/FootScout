@@ -32,7 +32,7 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
   if (!isVisible) return null;
 
   return (
-    <div className="border border-fm-accent/30 dark:border-fm-accent/40 rounded-lg bg-fm-accent/5 dark:bg-fm-accent/10 p-4 mt-4 space-y-3">
+    <div className="border border-fm-accent/30 dark:border-fm-accent/40 rounded-lg bg-fm-accent/5 dark:bg-fm-accent/10 p-3 sm:p-4 mt-4 space-y-3 sm:space-y-3">
       <h3 className="text-sm font-semibold text-fm-accent">
         Novo Jogador
       </h3>
@@ -58,7 +58,7 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
         <FieldError message={errors.playerDateOfBirth?.message} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <Label htmlFor="playerPositionGroup">Grupo posicional</Label>
           <Select
@@ -111,7 +111,7 @@ export function NewPlayerFields({ register, isVisible, errors }: NewPlayerFields
         <FieldError message={errors.playerNationality?.message} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <Label htmlFor="playerPreferredFoot">Pé preferido</Label>
           <Select
