@@ -89,6 +89,13 @@ export function PlayerList({
         aValue = a.createdAt;
         bValue = b.createdAt;
         break;
+      case "weightedScore": {
+        const aWeighted = playerWeightedAverages?.[a.id]?.ponderatedGlobalAverage ?? 0;
+        const bWeighted = playerWeightedAverages?.[b.id]?.ponderatedGlobalAverage ?? 0;
+        return sortDirection === "asc"
+          ? aWeighted - bWeighted
+          : bWeighted - aWeighted;
+      }
       default:
         return 0;
     }
@@ -261,6 +268,14 @@ export function PlayerList({
               >
                 Última Avaliação{renderSortIndicator("lastScouted")}
               </th>
+              {boostedAttrs.length > 0 && (
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                  onClick={() => handleSort("weightedScore")}
+                >
+                  Pontuação{renderSortIndicator("weightedScore")}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
@@ -291,6 +306,11 @@ export function PlayerList({
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
                   {getLastScouted(player)}
                 </td>
+                {boostedAttrs.length > 0 && (
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
+                    {playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage?.toFixed(2) ?? "—"}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
