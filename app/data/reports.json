@@ -31,7 +31,10 @@
       "impact": 5,
       "notes": "Exceptional pace and finishing. Stood out in transition."
     },
-    "createdAt": "2026-05-12T00:00:00.000Z"
+    "status": "submitted",
+    "currentStep": 0,
+    "createdAt": "2026-05-12T00:00:00.000Z",
+    "updatedAt": "2026-05-12T00:00:00.000Z"
   },
   {
     "id": "report-002",
@@ -65,7 +68,10 @@
       "impact": 4,
       "notes": "Good performance, some attributes not observed."
     },
-    "createdAt": "2026-05-12T00:00:00.000Z"
+    "status": "submitted",
+    "currentStep": 0,
+    "createdAt": "2026-05-12T00:00:00.000Z",
+    "updatedAt": "2026-05-12T00:00:00.000Z"
   },
   {
     "id": "report-003",
@@ -99,7 +105,10 @@
       "impact": 4,
       "notes": "Excellent passing range, controls the midfield."
     },
-    "createdAt": "2026-05-12T00:00:00.000Z"
+    "status": "submitted",
+    "currentStep": 0,
+    "createdAt": "2026-05-12T00:00:00.000Z",
+    "updatedAt": "2026-05-12T00:00:00.000Z"
   },
   {
     "id": "report-004",
@@ -133,7 +142,10 @@
       "impact": 4,
       "notes": "Consistent performance, strong work rate."
     },
-    "createdAt": "2026-05-12T00:00:00.000Z"
+    "status": "submitted",
+    "currentStep": 0,
+    "createdAt": "2026-05-12T00:00:00.000Z",
+    "updatedAt": "2026-05-12T00:00:00.000Z"
   },
   {
     "id": "report-005",
@@ -168,6 +180,45 @@
       "impact": 4,
       "notes": "Strong defensive presence, excellent positioning."
     },
-    "createdAt": "2026-05-12T00:00:00.000Z"
+    "status": "submitted",
+    "currentStep": 0,
+    "createdAt": "2026-05-12T00:00:00.000Z",
+    "updatedAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "playerId": "player-003",
+    "scoutId": "scout-001",
+    "matchDate": "",
+    "opponent": "",
+    "competition": "",
+    "status": "draft",
+    "currentStep": 1,
+    "physical": {
+      "pace": null,
+      "strength": null,
+      "stamina": null,
+      "agility": null
+    },
+    "technical": {
+      "finishing": null,
+      "passing": null,
+      "dribbling": null,
+      "firstTouch": null
+    },
+    "tactical": {
+      "positioning": null,
+      "awareness": null,
+      "decisionMaking": null,
+      "workRate": null
+    },
+    "matchNotes": {
+      "attitude": null,
+      "coachability": null,
+      "intensity": null,
+      "impact": null
+    },
+    "id": "6f7b69ff-4ae6-409d-86fb-fc26758b6f3e",
+    "createdAt": "2026-05-15T05:03:30.103Z",
+    "updatedAt": "2026-05-15T05:03:30.104Z"
   }
 ]

@@ -5,17 +5,21 @@ import { useSubmit, useNavigation, useFetcher } from "react-router";
 import clsx from "clsx";
 import type { Player, Scout, Report } from "~/data/types";
 import {
-reportFormSchema,
-type ReportFormValues,
-STEP_FIELDS,
-STEP_LABELS,
-TOTAL_STEPS,
+  reportFormSchema,
+  type ReportFormValues,
+  STEP_FIELDS,
+  STEP_LABELS,
+  TOTAL_STEPS,
 } from "~/data/form-schema";
 import { StepIndicator } from "./step-indicator";
 import { AttributeRatingRow } from "./attribute-rating-row";
 import { PlayerCombobox } from "./player-combobox";
 import { NewPlayerFields } from "./new-player-fields";
 import { DraftBanner } from "./draft-banner";
+import { Select } from "./ui/select";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
 
 interface ScoutReportFormProps {
 players: Player[];
@@ -281,10 +285,10 @@ const draftPlayerName = draft?.playerId
 : "Unknown Player";
 
 return (
-<main className="pt-8 pb-8 container mx-auto max-w-xl px-4">
-<h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-Scout Report
-</h1>
+    <main className="pt-8 pb-8 container mx-auto max-w-xl px-4">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">
+        Scout Report
+      </h1>
 
 {draft && !hasResumed && (
 <DraftBanner
@@ -297,23 +301,20 @@ onResume={handleResumeDraft}
 
 <StepIndicator currentStep={currentStep} steps={STEP_LABELS} totalSteps={TOTAL_STEPS} />
 
-<div className="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-2">
+    <div className="mt-6 rounded-2xl border border-gray-200 dark:border-fm-border bg-white dark:bg-fm-card p-6 space-y-2">
         {currentStep === 0 && (
           <div className="space-y-4">
-            <div>
-              <label htmlFor="scoutId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Scout
-              </label>
-              <select
-                id="scoutId"
-                {...register("scoutId")}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select scout...</option>
-                {scouts.map((scout) => (
-                  <option key={scout.id} value={scout.id}>{scout.name}</option>
-                ))}
-              </select>
+        <div>
+          <Label htmlFor="scoutId">Scout</Label>
+          <Select
+            id="scoutId"
+            {...register("scoutId")}
+          >
+            <option value="">Select scout...</option>
+            {scouts.map((scout) => (
+              <option key={scout.id} value={scout.id}>{scout.name}</option>
+            ))}
+          </Select>
               {errors.scoutId && (
                 <p className="text-red-500 text-xs mt-1">{errors.scoutId.message}</p>
               )}
@@ -329,12 +330,12 @@ onResume={handleResumeDraft}
             )}
 
             {isNewPlayer && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-fm-text-muted">
                 <span>Creating new player</span>
                 <button
                   type="button"
                   onClick={handleSelectExisting}
-                  className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                  className="text-fm-accent dark:text-fm-accent hover:underline text-sm"
                 >
                   Select existing instead
                 </button>
@@ -401,80 +402,69 @@ onResume={handleResumeDraft}
               ))}
             </div>
 
-            <div className="space-y-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-              <div>
-                <label htmlFor="matchDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Match date
-                </label>
-                <input
-                  id="matchDate"
-                  type="date"
-                  {...register("matchDate")}
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.matchDate && (
-                  <p className="text-red-500 text-xs mt-1">{errors.matchDate.message as string}</p>
-                )}
-              </div>
+      <div className="space-y-3 pt-2 border-t border-gray-200 dark:border-fm-border">
+        <div>
+          <Label htmlFor="matchDate">Match date</Label>
+          <Input
+            id="matchDate"
+            type="date"
+            {...register("matchDate")}
+          />
+          {errors.matchDate && (
+            <p className="text-red-500 text-xs mt-1">{errors.matchDate.message as string}</p>
+          )}
+        </div>
 
-              <div>
-                <label htmlFor="opponent" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Opponent
-                </label>
-                <input
-                  id="opponent"
-                  type="text"
-                  {...register("opponent")}
-                  placeholder="Opponent team"
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.opponent && (
-                  <p className="text-red-500 text-xs mt-1">{errors.opponent.message as string}</p>
-                )}
-              </div>
+        <div>
+          <Label htmlFor="opponent">Opponent</Label>
+          <Input
+            id="opponent"
+            type="text"
+            {...register("opponent")}
+            placeholder="Opponent team"
+          />
+          {errors.opponent && (
+            <p className="text-red-500 text-xs mt-1">{errors.opponent.message as string}</p>
+          )}
+        </div>
 
-              <div>
-                <label htmlFor="competition" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Competition
-                </label>
-                <input
-                  id="competition"
-                  type="text"
-                  {...register("competition")}
-                  placeholder="Competition name"
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.competition && (
-                  <p className="text-red-500 text-xs mt-1">{errors.competition.message as string}</p>
-                )}
-              </div>
+        <div>
+          <Label htmlFor="competition">Competition</Label>
+          <Input
+            id="competition"
+            type="text"
+            {...register("competition")}
+            placeholder="Competition name"
+          />
+          {errors.competition && (
+            <p className="text-red-500 text-xs mt-1">{errors.competition.message as string}</p>
+          )}
+        </div>
 
-              <div>
-                <label htmlFor="matchResult" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Match result <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  id="matchResult"
-                  type="text"
-                  {...register("matchResult")}
-                  placeholder="e.g., 2-1"
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+        <div>
+          <Label htmlFor="matchResult">
+            Match result <span className="text-fm-text-muted">(optional)</span>
+          </Label>
+          <Input
+            id="matchResult"
+            type="text"
+            {...register("matchResult")}
+            placeholder="e.g., 2-1"
+          />
+        </div>
 
-              <div>
-                <label htmlFor="matchNotes.notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Notes <span className="text-gray-400">(optional)</span>
-                </label>
-                <textarea
-                  id="matchNotes.notes"
-                  {...register("matchNotes.notes")}
-                  rows={3}
-                  placeholder="Additional observations..."
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
-                />
-              </div>
-            </div>
+        <div>
+          <Label htmlFor="matchNotes.notes">
+            Notes <span className="text-fm-text-muted">(optional)</span>
+          </Label>
+          <Textarea
+            id="matchNotes.notes"
+            {...register("matchNotes.notes")}
+            rows={3}
+            placeholder="Additional observations..."
+          />
+        </div>
+      </div>
           </div>
         )}
       </div>
@@ -484,7 +474,7 @@ onResume={handleResumeDraft}
           <button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-fm-label bg-white dark:bg-fm-card-alt border border-gray-300 dark:border-fm-border rounded-lg hover:bg-gray-50 dark:hover:bg-fm-border transition-colors"
           >
             Back
           </button>
@@ -496,7 +486,7 @@ onResume={handleResumeDraft}
           <button
             type="button"
             onClick={handleNext}
-            className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            className="px-6 py-2 text-sm font-medium text-white bg-fm-accent rounded-lg hover:bg-fm-accent-hover transition-colors shadow-sm"
           >
             Next
           </button>
@@ -505,12 +495,12 @@ onResume={handleResumeDraft}
 type="button"
 onClick={handleSubmit(onValidSubmit)}
 disabled={isSubmitting}
-className={clsx(
-"px-6 py-2 text-sm font-medium text-white rounded-lg transition-colors shadow-sm",
-isSubmitting
-? "bg-blue-400 cursor-not-allowed"
-: "bg-blue-600 hover:bg-blue-700"
-)}
+          className={clsx(
+            "px-6 py-2 text-sm font-medium text-white rounded-lg transition-colors shadow-sm",
+            isSubmitting
+              ? "bg-fm-accent/50 cursor-not-allowed"
+              : "bg-fm-accent hover:bg-fm-accent-hover"
+          )}
 >
 {isSubmitting ? "Submitting..." : "Submit Report"}
 </button>
@@ -519,7 +509,7 @@ isSubmitting
 
 {/* Draft saved indicator */}
 {fetcher.state === "idle" && fetcher.data?.success && (
-<div className="text-sm text-green-600 mt-2">Draft saved</div>
+        <div className="text-sm text-fm-accent mt-2">Draft saved</div>
 )}
 </div>
 </main>

@@ -109,7 +109,7 @@ export const reportSchema = z.object({
   status: z.enum(["draft", "submitted"]).default("submitted"),
   currentStep: z.number().default(0),
   createdAt: isoDateTimeSchema, // ISO datetime
-  updatedAt: isoDateTimeSchema, // ISO datetime
+  updatedAt: isoDateTimeSchema.optional(), // ISO datetime — optional for legacy seed data
 });
 export type Report = z.infer<typeof reportSchema>;
 export type NewReport = Omit<Report, "id" | "createdAt" | "updatedAt"> & {

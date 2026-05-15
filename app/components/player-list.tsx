@@ -33,7 +33,6 @@ export function PlayerList({
   onClubFilterChange,
   uniqueClubs,
 }: PlayerListProps) {
-  // Calculate age from dateOfBirth
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
     const today = new Date();
@@ -48,18 +47,15 @@ export function PlayerList({
     return age;
   };
 
-  // Get last scouted date (most recent report date for this player)
   const getLastScouted = (player: Player): string => {
     const lastScouted = reportStats[player.id]?.lastScouted;
     return lastScouted ? new Date(lastScouted).toLocaleDateString() : "-";
   };
 
-  // Get report count (actual count from submitted reports)
   const getReportCount = (player: Player): number => {
     return reportStats[player.id]?.count ?? 0;
   };
 
-  // Sort players based on sortBy and sortDirection
   const sortedPlayers = [...players].sort((a, b) => {
     let aValue: string | number | null = null;
     let bValue: string | number | null = null;
@@ -106,38 +102,89 @@ export function PlayerList({
     return 0;
   });
 
-  // Render sort indicator
   const renderSortIndicator = (column: string) => {
     if (sortBy !== column) {
-      return <span className="ml-1 text-gray-300 opacity-0 group-hover:opacity-100">⇅</span>;
+      return <span className="ml-1 text-fm-text-muted dark:text-fm-text-muted opacity-0 group-hover:opacity-100">⇅</span>;
     }
     return sortDirection === "asc" ? (
-      <span className="ml-1 text-blue-600">↑</span>
+      <span className="ml-1 text-fm-accent">↑</span>
     ) : (
-      <span className="ml-1 text-blue-600">↓</span>
+      <span className="ml-1 text-fm-accent">↓</span>
     );
   };
 
-  // Handle header click to toggle sort
   const handleSort = (column: string) => {
     onSort(column);
   };
 
-const emptyStateMessage = players.length === 0
-  ? "No players yet"
-  : "No players found";
+  const emptyStateMessage = players.length === 0
+    ? "No players yet"
+    : "No players found";
 
-const emptyStateDescription = players.length === 0
-  ? "Players will appear here once scouts start submitting reports."
-  : "Try adjusting your search or filters to find what you're looking for.";
+  const emptyStateDescription = players.length === 0
+    ? "Players will appear here once scouts start submitting reports."
+    : "Try adjusting your search or filters to find what you're looking for.";
 
-if (players.length === 0 && (search || positionFilter !== "all" || clubFilter !== "all")) {
-  // Show empty state when filters are applied but no results
+  if (players.length === 0 && (search || positionFilter !== "all" || clubFilter !== "all")) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-fm-text-muted" />
+            <Input
+              type="text"
+              placeholder="Search by player name..."
+              value={search}
+              onChange={(e) => onSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Select
+            value={positionFilter}
+            onChange={(e) => onPositionFilterChange(e.target.value)}
+            className="w-full sm:w-48"
+          >
+            <option value="all">All positions</option>
+            <option value="GK">GK</option>
+            <option value="DEF">DEF</option>
+            <option value="MID">MID</option>
+            <option value="FWD">FWD</option>
+          </Select>
+          <Select
+            value={clubFilter}
+            onChange={(e) => onClubFilterChange(e.target.value)}
+            className="w-full sm:w-48"
+          >
+            <option value="all">All clubs</option>
+            {uniqueClubs.map((club) => (
+              <option key={club} value={club}>
+                {club}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="text-center py-12">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text">{emptyStateMessage}</h3>
+          <p className="text-gray-500 dark:text-fm-text-secondary mt-2">{emptyStateDescription}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (players.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text">{emptyStateMessage}</h3>
+        <p className="text-gray-500 dark:text-fm-text-secondary mt-2">{emptyStateDescription}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-fm-text-muted" />
           <Input
             type="text"
             placeholder="Search by player name..."
@@ -170,135 +217,81 @@ if (players.length === 0 && (search || positionFilter !== "all" || clubFilter !=
           ))}
         </Select>
       </div>
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold text-gray-900">{emptyStateMessage}</h3>
-        <p className="text-gray-500 mt-2">{emptyStateDescription}</p>
-      </div>
-    </div>
-  );
-}
-
-if (players.length === 0) {
-  return (
-    <div className="text-center py-12">
-      <h3 className="text-lg font-semibold text-gray-900">{emptyStateMessage}</h3>
-      <p className="text-gray-500 mt-2">{emptyStateDescription}</p>
-    </div>
-  );
-}
-
-return (
-  <div className="space-y-4">
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          type="text"
-          placeholder="Search by player name..."
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-          className="pl-9"
-        />
-      </div>
-      <Select
-        value={positionFilter}
-        onChange={(e) => onPositionFilterChange(e.target.value)}
-        className="w-full sm:w-48"
-      >
-        <option value="all">All positions</option>
-        <option value="GK">GK</option>
-        <option value="DEF">DEF</option>
-        <option value="MID">MID</option>
-        <option value="FWD">FWD</option>
-      </Select>
-      <Select
-        value={clubFilter}
-        onChange={(e) => onClubFilterChange(e.target.value)}
-        className="w-full sm:w-48"
-      >
-        <option value="all">All clubs</option>
-        {uniqueClubs.map((club) => (
-          <option key={club} value={club}>
-            {club}
-          </option>
-        ))}
-      </Select>
-    </div>
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("player")}
-            >
-              Player{renderSortIndicator("player")}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("position")}
-            >
-              Position{renderSortIndicator("position")}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("club")}
-            >
-              Club{renderSortIndicator("club")}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("age")}
-            >
-              Age{renderSortIndicator("age")}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("reports")}
-            >
-              Reports{renderSortIndicator("reports")}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer group hover:bg-gray-100"
-              onClick={() => handleSort("lastScouted")}
-            >
-              Last Scouted{renderSortIndicator("lastScouted")}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedPlayers.map((player) => (
-            <tr key={player.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <Link
-                  to={`/division/players/${player.id}`}
-                  className="text-gray-900 hover:text-blue-600"
-                >
-                  {player.name}
-                </Link>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  {player.position}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {player.club}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {calculateAge(player.dateOfBirth)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {getReportCount(player)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {getLastScouted(player)}
-              </td>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-fm-border">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-fm-border">
+          <thead className="bg-gray-50 dark:bg-fm-card-alt">
+            <tr>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("player")}
+              >
+                Player{renderSortIndicator("player")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("position")}
+              >
+                Position{renderSortIndicator("position")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("club")}
+              >
+                Club{renderSortIndicator("club")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("age")}
+              >
+                Age{renderSortIndicator("age")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("reports")}
+              >
+                Reports{renderSortIndicator("reports")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("lastScouted")}
+              >
+                Last Scouted{renderSortIndicator("lastScouted")}
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
+            {sortedPlayers.map((player) => (
+              <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <Link
+                    to={`/division/players/${player.id}`}
+                    className="text-gray-900 hover:text-fm-accent dark:text-fm-text dark:hover:text-fm-accent"
+                  >
+                    {player.name}
+                  </Link>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
+                    {player.position}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                  {player.club}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                  {calculateAge(player.dateOfBirth)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                  {getReportCount(player)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                  {getLastScouted(player)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-);
+  );
 }

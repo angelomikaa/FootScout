@@ -35,5 +35,16 @@
     "height": 165,
     "weight": 58,
     "createdAt": "2026-05-12T00:00:00.000Z"
+  },
+  {
+    "id": "player-004",
+    "name": "Tomás Gutiérrez",
+    "dateOfBirth": "2011-01-25",
+    "positionGroup": "MID",
+    "position": "CAM",
+    "club": "Vélez Sarsfield",
+    "nationality": "AR",
+    "preferredFoot": "right",
+    "createdAt": "2026-05-14T00:00:00.000Z"
   }
 ]
