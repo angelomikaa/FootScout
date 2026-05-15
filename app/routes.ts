@@ -8,5 +8,6 @@ export default [
   ]),
   ...prefix("division", [
     route("players", "routes/division/players.tsx"),
+    route("players/:id", "routes/division/players.$id.tsx"),
   ]),
 ] satisfies RouteConfig;
