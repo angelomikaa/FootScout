@@ -285,7 +285,7 @@ const draftPlayerName = draft?.playerId
 : "Unknown Player";
 
 return (
-    <main className="pt-8 pb-8 container mx-auto max-w-xl px-4">
+    <div>
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">
         Relatório de Observação
       </h1>
@@ -512,6 +512,6 @@ disabled={isSubmitting}
         <div className="text-sm text-fm-accent mt-2">Rascunho salvo</div>
 )}
 </div>
-</main>
-);
+</div>
+  );
 }

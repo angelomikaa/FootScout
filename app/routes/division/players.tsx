@@ -1,4 +1,4 @@
-import { useLoaderData, useSearchParams } from "react-router";
+import { useLoaderData, useSearchParams, Link } from "react-router";
 import { getPlayers, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
 import { PlayerList } from "~/components/player-list";
 import { AttributeToggle } from "~/components/attribute-toggle";
@@ -152,6 +152,13 @@ export default function PlayersPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Link
+        to="/"
+        className="inline-flex items-center text-sm text-fm-accent hover:text-fm-accent-hover mb-6"
+      >
+        &larr; Voltar ao início
+      </Link>
+
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">Jogadores</h1>
       <AttributeToggle boostedAttrs={boostedAttrs} />
       <PlayerList
