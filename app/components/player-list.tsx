@@ -19,6 +19,8 @@ interface PlayerListProps {
   uniqueClubs: string[];
   boostedAttrs?: string[];
   playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
+  selectedCompareIds?: string[];
+  onCompareToggle?: (playerId: string) => void;
 }
 
 export function PlayerList({
@@ -36,6 +38,8 @@ export function PlayerList({
   uniqueClubs,
   boostedAttrs = [],
   playerWeightedAverages = {},
+  selectedCompareIds = [],
+  onCompareToggle,
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
@@ -276,6 +280,11 @@ export function PlayerList({
                   Pontuação{renderSortIndicator("weightedScore")}
                 </th>
               )}
+              {onCompareToggle && (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
+                  Comparar
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
@@ -309,6 +318,25 @@ export function PlayerList({
                 {boostedAttrs.length > 0 && (
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
                     {playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage?.toFixed(2) ?? "—"}
+                  </td>
+                )}
+                {onCompareToggle && (
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => onCompareToggle(player.id)}
+                      className={`
+                        inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium
+                        transition-colors duration-150
+                        ${
+                          selectedCompareIds.includes(player.id)
+                            ? "bg-fm-accent text-white hover:bg-fm-accent-hover"
+                            : "bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card"
+                        }
+                      `}
+                    >
+                      {selectedCompareIds.includes(player.id) ? "Selecionado" : "Comparar"}
+                    </button>
                   </td>
                 )}
               </tr>

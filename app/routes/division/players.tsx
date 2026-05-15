@@ -44,6 +44,37 @@ export default function PlayersPage() {
     ? "weightedScore"
     : sortBy;
 
+  // Compare selection state
+  const compareParam = searchParams.get("compare") || "";
+  const selectedCompareIds = compareParam ? compareParam.split(",").filter(Boolean) : [];
+
+  const handleCompareToggle = (playerId: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    const current = newParams.get("compare")?.split(",").filter(Boolean) || [];
+
+    if (current.includes(playerId)) {
+      // Deselect
+      const next = current.filter((id) => id !== playerId);
+      if (next.length > 0) {
+        newParams.set("compare", next.join(","));
+      } else {
+        newParams.delete("compare");
+      }
+    } else if (current.length < 2) {
+      // Select (max 2)
+      newParams.set("compare", [...current, playerId].join(","));
+    }
+
+    setSearchParams(newParams);
+  };
+
+  // Navigate to comparison when 2 players selected
+  const handleCompareNavigate = () => {
+    if (selectedCompareIds.length === 2) {
+      window.location.href = `/division/compare?players=${selectedCompareIds.join(",")}${boostedAttrs.length > 0 ? `&w=${boostedAttrs.join(",")}` : ""}`;
+    }
+  };
+
   // Get search and filter state from URL params
   const search = searchParams.get("search") || "";
   const positionFilter = searchParams.get("position") || "all";
@@ -138,7 +169,50 @@ export default function PlayersPage() {
         uniqueClubs={uniqueClubs}
         boostedAttrs={boostedAttrs}
         playerWeightedAverages={playerWeightedAverages}
+        selectedCompareIds={selectedCompareIds}
+        onCompareToggle={handleCompareToggle}
       />
+
+      {selectedCompareIds.length === 1 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-fm-accent text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-4 z-50">
+          <span className="text-sm font-medium">1 jogador selecionado — selecione outro para comparar</span>
+          <button
+            type="button"
+            onClick={() => {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.delete("compare");
+              setSearchParams(newParams);
+            }}
+            className="text-white/80 hover:text-white text-sm"
+          >
+            Cancelar
+          </button>
+        </div>
+      )}
+
+      {selectedCompareIds.length === 2 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-fm-accent text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-4 z-50">
+          <span className="text-sm font-medium">2 jogadores selecionados</span>
+          <button
+            type="button"
+            onClick={handleCompareNavigate}
+            className="bg-white text-fm-accent px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
+          >
+            Comparar
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.delete("compare");
+              setSearchParams(newParams);
+            }}
+            className="text-white/80 hover:text-white text-sm"
+          >
+            Cancelar
+          </button>
+        </div>
+      )}
     </div>
   );
 }
