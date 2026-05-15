@@ -8,7 +8,7 @@ export function getFlagEmoji(countryCode: string): string {
   return String.fromCodePoint(...codePoints);
 }
 
-const ATTRIBUTE_LABELS: Record<string, string> = {
+export const ATTRIBUTE_LABELS: Record<string, string> = {
   pace: "Velocidade",
   strength: "Força",
   stamina: "Resistência",
