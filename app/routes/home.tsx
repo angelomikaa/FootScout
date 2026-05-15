@@ -1,7 +1,53 @@
 import { Link, useSearchParams } from "react-router";
 import { useEffect } from "react";
+import { getPlayers, getReports, getScouts, getPlayerReportStats } from "~/data/data";
+import { calculateOverallAverage } from "~/lib/scoring/average";
+import type { Route } from "./+types/home";
 
-export default function Home() {
+export async function loader() {
+  const [players, reports, scouts, reportStats] = await Promise.all([
+    getPlayers(),
+    getReports(),
+    getScouts(),
+    getPlayerReportStats(),
+  ]);
+
+  const submittedReports = reports.filter((r) => r.status === "submitted");
+  const draftReports = reports.filter((r) => r.status === "draft");
+  const recentReports = submittedReports.slice(0, 5);
+
+  const mostScouted = players
+    .map((p) => ({
+      ...p,
+      reportCount: reportStats[p.id]?.count ?? 0,
+      lastScouted: reportStats[p.id]?.lastScouted ?? null,
+    }))
+    .filter((p) => p.reportCount > 0)
+    .sort((a, b) => b.reportCount - a.reportCount)
+    .slice(0, 5);
+
+  const scoutActivity = scouts.map((scout) => ({
+    ...scout,
+    reportCount: submittedReports.filter((r) => r.scoutId === scout.id).length,
+  }));
+
+  const uniqueOpponents = new Set(submittedReports.map((r) => r.opponent)).size;
+  const uniqueCompetitions = new Set(submittedReports.map((r) => r.competition)).size;
+
+  return {
+    players,
+    scouts,
+    submittedReports,
+    draftReports,
+    recentReports,
+    mostScouted,
+    scoutActivity,
+    uniqueOpponents,
+    uniqueCompetitions,
+  };
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const justSubmitted = searchParams.get("submitted") === "true";
   const isDuplicate = searchParams.get("duplicate") === "true";
@@ -14,6 +60,26 @@ export default function Home() {
       return () => clearTimeout(timeout);
     }
   }, [justSubmitted, isDuplicate]);
+
+  const {
+    players,
+    submittedReports,
+    draftReports,
+    recentReports,
+    mostScouted,
+    scoutActivity,
+    uniqueOpponents,
+    uniqueCompetitions,
+  } = loaderData || {
+    players: [],
+    submittedReports: [],
+    draftReports: [],
+    recentReports: [],
+    mostScouted: [],
+    scoutActivity: [],
+    uniqueOpponents: 0,
+    uniqueCompetitions: 0,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-fm-bg">
@@ -28,7 +94,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {justSubmitted && (
           <div className="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">
             <svg className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,145 +134,237 @@ export default function Home() {
             </button>
           </div>
         )}
-        <div className="grid md:grid-cols-2 gap-8">
-          <section className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
+            <p className="text-sm text-gray-500 dark:text-fm-text-muted">Jogadores</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-fm-text">{players.length}</p>
+          </div>
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
+            <p className="text-sm text-gray-500 dark:text-fm-text-muted">Relatórios</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-fm-text">{submittedReports.length}</p>
+          </div>
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
+            <p className="text-sm text-gray-500 dark:text-fm-text-muted">Adversários</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-fm-text">{uniqueOpponents}</p>
+          </div>
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
+            <p className="text-sm text-gray-500 dark:text-fm-text-muted">Competições</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-fm-text">{uniqueCompetitions}</p>
+          </div>
+        </div>
+
+        {draftReports.length > 0 && (
+          <div className="mb-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <h3 className="font-semibold text-amber-800 dark:text-amber-300">Rascunho Pendente</h3>
+            </div>
+            <p className="text-sm text-amber-700 dark:text-amber-400 mb-3">
+              Você tem {draftReports.length} rascunho não finalizado
+            </p>
+            <Link
+              to="/scout/report"
+              className="inline-flex items-center text-sm font-medium text-amber-800 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-200"
+            >
+              Continuar edição &rarr;
+            </Link>
+          </div>
+        )}
+
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Relatórios Recentes</h2>
+                <Link
+                  to="/scout/reports"
+                  className="text-sm text-fm-accent hover:text-fm-accent-hover"
+                >
+                  Ver todos &rarr;
+                </Link>
+              </div>
+
+              {recentReports.length === 0 ? (
+                <div className="p-8 text-center">
+                  <p className="text-gray-500 dark:text-fm-text-secondary">Nenhum relatório enviado ainda</p>
+                  <Link
+                    to="/scout/report"
+                    className="inline-block mt-4 text-sm text-fm-accent hover:text-fm-accent-hover"
+                  >
+                    Criar primeiro relatório &rarr;
+                  </Link>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-fm-border">
+                  {recentReports.map((report) => (
+                    <Link
+                      key={report.id}
+                      to={`/division/players/${report.playerId}`}
+                      className="block px-6 py-4 hover:bg-gray-50 dark:hover:bg-fm-card-alt transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900 dark:text-fm-text">
+                            {players.find((p) => p.id === report.playerId)?.name || "Jogador desconhecido"}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-0.5">
+                            {new Date(report.matchDate).toLocaleDateString("pt-BR")} · {report.opponent}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-semibold text-fm-accent">
+                            {calculateOverallAverage(report).toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-0.5">
+                            {report.competition}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Mais Avaliados</h2>
+              </div>
+
+              {mostScouted.length === 0 ? (
+                <div className="p-6 text-center text-sm text-gray-500 dark:text-fm-text-secondary">
+                  Sem dados ainda
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-fm-border">
+                  {mostScouted.map((player, index) => (
+                    <Link
+                      key={player.id}
+                      to={`/division/players/${player.id}`}
+                      className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 dark:hover:bg-fm-card-alt transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-fm-accent/10 text-fm-accent text-xs font-bold flex items-center justify-center">
+                          {index + 1}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-fm-text">{player.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-fm-text-muted">{player.position}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-fm-text">
+                        {player.reportCount}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Atividade por Observador</h2>
+              </div>
+
+              <div className="divide-y divide-gray-100 dark:divide-fm-border">
+                {scoutActivity.map((scout) => (
+                  <div key={scout.id} className="px-6 py-3 flex items-center justify-between">
+                    <p className="text-sm text-gray-900 dark:text-fm-text">{scout.name}</p>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-fm-text">
+                      {scout.reportCount}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+                <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Área do Observador
               </h3>
             </div>
-            <div className="p-4 sm:p-6">
-              <p className="text-gray-600 dark:text-fm-text-secondary mb-4 sm:mb-6">
-                Ferramentas para observadores inserirem e gerenciarem avaliações de jogadores.
-              </p>
-              <ul className="space-y-4">
-                <li>
-                  <Link
-                    to="/scout/report"
-                    className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          Novo Relatório
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          Criar um novo relatório de observação com formulário em etapas
-                        </p>
-                      </div>
-                      <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/scout/reports"
-                    className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          Meus Relatórios
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          Visualizar e gerenciar seus relatórios enviados
-                        </p>
-                      </div>
-                      <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </Link>
-                </li>
-              </ul>
+            <div className="p-6 space-y-3">
+              <Link
+                to="/scout/report"
+                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
+                      Novo Relatório
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
+                      Formulário em etapas com rascunho automático
+                    </p>
+                  </div>
+                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
+              <Link
+                to="/scout/reports"
+                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
+                      Meus Relatórios
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
+                      Visualizar e filtrar relatórios enviados
+                    </p>
+                  </div>
+                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
             </div>
-          </section>
+          </div>
 
-          <section className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="bg-gray-100 dark:bg-fm-card-alt px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                <svg className="w-6 h-6 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
+            <div className="bg-gray-100 dark:bg-fm-card-alt px-6 py-4 border-b border-gray-200 dark:border-fm-border">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
+                <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
                 </svg>
                 Área da Divisão
               </h3>
             </div>
-            <div className="p-4 sm:p-6">
-              <p className="text-gray-600 dark:text-fm-text-secondary mb-4 sm:mb-6">
-                Navegue, busque e avalie jogadores para a divisão de observação.
-              </p>
-              <ul className="space-y-4">
-                <li>
-                  <Link
-                    to="/division/players"
-                    className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
-                          Lista de Jogadores
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
-                          Navegue por todos os jogadores com busca e filtros
-                        </p>
-                      </div>
-                      <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </Link>
-                </li>
-              </ul>
+            <div className="p-6 space-y-3">
+              <Link
+                to="/division/players"
+                className="block p-4 rounded-lg border-2 border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent dark:group-hover:text-fm-accent">
+                      Lista de Jogadores
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-fm-text-muted mt-1">
+                      Buscar, filtrar e comparar jogadores
+                    </p>
+                  </div>
+                  <svg className="w-5 h-5 text-gray-400 dark:text-fm-text-muted group-hover:text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
             </div>
-          </section>
-        </div>
-
-        <div className="mt-12 mb-12">
-          <details className="group bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border">
-            <summary className="flex items-center justify-between px-6 py-4 cursor-pointer text-gray-500 dark:text-fm-text-muted hover:text-gray-700 dark:hover:text-fm-text transition-colors text-sm font-medium">
-              <span>Status do Projeto</span>
-              <svg className="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </summary>
-            <div className="px-6 pb-6 border-t border-gray-200 dark:border-fm-border pt-4">
-              <p className="text-gray-600 dark:text-fm-text-secondary mb-4 text-sm">
-                Plataforma de observação para acompanhamento de jovens prospectos Sub-15.
-              </p>
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 1: Data Foundation
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 2-3: Scout Reports
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 4: Player List
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 5: Player Profile
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 6-8: Scoring &amp; Comparison
-                </span>
-              </div>
-            </div>
-          </details>
-        </div>
-
-        <div className="mt-12 bg-fm-accent/5 dark:bg-fm-accent/10 rounded-lg p-6 border border-fm-accent/20 dark:border-fm-accent/30">
-          <h3 className="text-lg font-semibold text-fm-accent mb-2">
-          Funcionalidade Principal: Motor de Pontuação Ponderada
-        </h3>
-        <p className="text-gray-700 dark:text-fm-text-secondary">
-          Médias ponderadas de 1 a 5 que se ajustam conforme o que a divisão procura,
-          com detalhamentos transparentes mostrando por que a pontuação de um jogador sobe ou desce.
-        </p>
+          </div>
         </div>
       </main>
 
