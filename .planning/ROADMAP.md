@@ -14,8 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Foundation** - Player/report entities, JSON data layer, Zod schemas with nullable ratings
 - [x] **Phase 2: Scout Report Form** - Staged entry form (physical → technical → tactical → notes) with new-player creation
-- [ ] **Phase 3: Draft & Report Management** - Draft persistence, "my reports" view for scouts
-- [ ] **Phase 4: Player List & Search** - Sortable, filterable, searchable player list for division
+- [x] **Phase 3: Draft & Report Management** - Draft persistence, "my reports" view for scouts
+- [x] **Phase 4: Player List & Search** - Sortable, filterable, searchable player list for division
 - [ ] **Phase 5: Player Profile** - Detailed profile page with identity info, report history, and score displays
 - [ ] **Phase 6: Simple Scoring & Radar** - Simple average calculation across reports, radar chart visualization
 - [ ] **Phase 7: Ponderated Scoring & Breakdown** - Weight controls, ponderated average, transparent score breakdown with deltas
@@ -86,6 +86,11 @@ Plans:
 1. Division member clicks a player from the list and lands on a detailed profile page showing identity info, all scout reports, and score displays
 2. Profile page shows each scout report with match context (date, opponent, competition, scout name) so the division can contextualize the observations
 **UI hint**: yes
+**Plans**: 2 plans
+
+Plans:
+- [x] 05-01-PLAN.md — Create profile route, IdentityCard, ReportCard, AttributeGrid, ScorePlaceholder components
+- [ ] 05-02-PLAN.md — Wire player list with clickable Links, real report counts, and last scouted dates
 
 ### Phase 6: Simple Scoring & Radar
 **Goal**: Player profiles show visual score profiles based on simple averages across all scout reports
@@ -127,7 +132,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Scout Report Form | 3/3 | Complete | 2026-05-13 |
 | 3. Draft & Report Management | 3/3 | Complete | 2026-05-13 |
 | 4. Player List & Search | 2/2 | Complete | 2026-05-14 |
-| 5. Player Profile | 0/TBD | Context gathered | - |
+| 5. Player Profile | 1/2 | In progress | - |
 | 6. Simple Scoring & Radar | 0/TBD | Not started | - |
 | 7. Ponderated Scoring & Breakdown | 0/TBD | Not started | - |
 | 8. Player Comparison | 0/TBD | Not started | - |

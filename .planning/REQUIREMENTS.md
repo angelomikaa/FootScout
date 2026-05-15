@@ -25,7 +25,7 @@
 - [ ] **BROWSE-01**: Division can view sortable, filterable player list
 - [ ] **BROWSE-02**: Division can search players by name, position, and club
 - [ ] **BROWSE-03**: Division can click from player list into detailed player profile
-- [ ] **BROWSE-04**: Player profile displays identity info, all reports, and visual scores
+- [ ] **BROWSE-04**: Player profile displays identity info, all reports, and visual scores (partial: identity + reports built, scores placeholder pending Phase 6)
 
 ### Scoring & Visualization
 
