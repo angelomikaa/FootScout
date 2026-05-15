@@ -72,6 +72,11 @@ Plans:
 1. Division member views a list of all players showing key identity fields, sortable by any column
 2. Division member filters the player list by position and club, and searches by player name
 **UI hint**: yes
+**Plans**: 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Create player list route and sortable table
+- [ ] 04-02-PLAN.md — Add search by name and filter by position/club
 
 ### Phase 5: Player Profile
 **Goal**: Division members can drill into a player's full scouting picture — identity, reports, and scores in one view
@@ -121,8 +126,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Data Foundation | 1/1 | Complete | 2026-05-12 |
 | 2. Scout Report Form | 3/3 | Complete | 2026-05-13 |
 | 3. Draft & Report Management | 3/3 | Complete | 2026-05-13 |
-| 4. Player List & Search | 0/TBD | Not started | - |
-| 5. Player Profile | 0/TBD | Not started | - |
+| 4. Player List & Search | 2/2 | Complete | 2026-05-14 |
+| 5. Player Profile | 0/TBD | Context gathered | - |
 | 6. Simple Scoring & Radar | 0/TBD | Not started | - |
 | 7. Ponderated Scoring & Breakdown | 0/TBD | Not started | - |
 | 8. Player Comparison | 0/TBD | Not started | - |
