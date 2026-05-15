@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Report, Player } from "../data/types";
 import { calculateOverallAverage } from "../lib/scoring/average";
 
@@ -48,8 +49,13 @@ export function ReportsTable({ reports, players }: ReportsTableProps) {
         <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
           {reports.map((report) => (
             <tr key={report.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-fm-text">
-                {getPlayerName(report.playerId)}
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <Link
+                  to={`/division/players/${report.playerId}`}
+                  className="text-gray-900 hover:text-fm-accent dark:text-fm-text dark:hover:text-fm-accent"
+                >
+                  {getPlayerName(report.playerId)}
+                </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
                 {new Date(report.matchDate).toLocaleDateString()}

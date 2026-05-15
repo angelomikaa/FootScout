@@ -191,8 +191,8 @@ export default function Home() {
                 <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
                   Phase 5: Player Profile
                 </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-fm-accent/10 text-fm-accent dark:bg-fm-accent/20 dark:text-fm-accent">
-                  Phase 6: Scoring &amp; Radar (Next)
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-fm-accent/20 dark:text-fm-accent">
+                  Phase 6-8: Scoring &amp; Comparison
                 </span>
               </div>
             </div>

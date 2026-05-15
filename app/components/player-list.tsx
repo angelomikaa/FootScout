@@ -202,7 +202,7 @@ export function PlayerList({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-fm-text-muted" />
           <Input
             type="text"
-            placeholder="Search by player name..."
+            placeholder="Buscar por nome do jogador..."
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             className="pl-9"
@@ -213,7 +213,7 @@ export function PlayerList({
           onChange={(e) => onPositionFilterChange(e.target.value)}
           className="w-full sm:w-48"
         >
-          <option value="all">All positions</option>
+            <option value="all">Todas as posições</option>
           <option value="GK">GK</option>
           <option value="DEF">DEF</option>
           <option value="MID">MID</option>
@@ -224,7 +224,7 @@ export function PlayerList({
           onChange={(e) => onClubFilterChange(e.target.value)}
           className="w-full sm:w-48"
         >
-          <option value="all">All clubs</option>
+            <option value="all">Todos os clubes</option>
           {uniqueClubs.map((club) => (
             <option key={club} value={club}>
               {club}
