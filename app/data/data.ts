@@ -240,3 +240,36 @@ export async function createScout(input: NewScout): Promise<Scout> {
   
   return newScout;
 }
+
+/**
+ * Get report stats (count + last scouted date) for all players.
+ * Used by the player list to populate Reports and Last Scouted columns.
+ * Only counts submitted reports, excludes drafts.
+ */
+export async function getPlayerReportStats(): Promise<
+  Record<string, { count: number; lastScouted: string | null }>
+> {
+  const reports = await getReports();
+  const stats: Record<string, { count: number; lastScouted: string | null }> = {};
+
+  for (const report of reports) {
+    // Only count submitted reports (not drafts)
+    if (report.status !== "submitted") continue;
+
+    if (!stats[report.playerId]) {
+      stats[report.playerId] = { count: 0, lastScouted: null };
+    }
+
+    stats[report.playerId].count++;
+
+    // Track most recent match date across all reports for this player
+    if (
+      stats[report.playerId].lastScouted === null ||
+      report.matchDate > stats[report.playerId].lastScouted!
+    ) {
+      stats[report.playerId].lastScouted = report.matchDate;
+    }
+  }
+
+  return stats;
+}
