@@ -3,7 +3,7 @@ import { getPlayers, getPlayerReportStats, getReportsByPlayer } from "~/data/dat
 import { PlayerList } from "~/components/player-list";
 import { AttributeToggle } from "~/components/attribute-toggle";
 import type { Player } from "~/data/types";
-import { parseWeightParams, calculatePonderatedAverages } from "~/lib/scoring/player-average";
+import { parseWeightParams, calculatePonderatedAverages, calculatePlayerAverages } from "~/lib/scoring/player-average";
 import type { Route } from "./+types/players";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -14,14 +14,16 @@ export async function loader({ request }: Route.LoaderArgs) {
   ]);
 
   let playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>> = {};
-  if (boostedAttrs.length > 0) {
-    for (const player of players) {
-      const reports = await getReportsByPlayer(player.id);
+  let playerSimpleAverages: Record<string, ReturnType<typeof calculatePlayerAverages>> = {};
+  for (const player of players) {
+    const reports = await getReportsByPlayer(player.id);
+    playerSimpleAverages[player.id] = calculatePlayerAverages(reports);
+    if (boostedAttrs.length > 0) {
       playerWeightedAverages[player.id] = calculatePonderatedAverages(reports, boostedAttrs);
     }
   }
 
-  return { players, reportStats, boostedAttrs, playerWeightedAverages };
+  return { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages };
 }
 
 type LoaderData = {
@@ -29,10 +31,11 @@ type LoaderData = {
   reportStats: Record<string, { count: number; lastScouted: string | null }>;
   boostedAttrs: string[];
   playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>>;
+  playerSimpleAverages: Record<string, ReturnType<typeof calculatePlayerAverages>>;
 };
 
 export default function PlayersPage() {
-  const { players, reportStats, boostedAttrs, playerWeightedAverages } = useLoaderData<typeof loader>();
+  const { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get sort state from URL params, default to createdAt desc
@@ -176,6 +179,7 @@ export default function PlayersPage() {
         uniqueClubs={uniqueClubs}
         boostedAttrs={boostedAttrs}
         playerWeightedAverages={playerWeightedAverages}
+        playerSimpleAverages={playerSimpleAverages}
         selectedCompareIds={selectedCompareIds}
         onCompareToggle={handleCompareToggle}
       />

@@ -19,6 +19,7 @@ interface PlayerListProps {
   uniqueClubs: string[];
   boostedAttrs?: string[];
   playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
+  playerSimpleAverages?: Record<string, { globalAverage: number | null }>;
   selectedCompareIds?: string[];
   onCompareToggle?: (playerId: string) => void;
 }
@@ -38,6 +39,7 @@ export function PlayerList({
   uniqueClubs,
   boostedAttrs = [],
   playerWeightedAverages = {},
+  playerSimpleAverages = {},
   selectedCompareIds = [],
   onCompareToggle,
 }: PlayerListProps) {
@@ -62,6 +64,10 @@ export function PlayerList({
 
   const getReportCount = (player: Player): number => {
     return reportStats[player.id]?.count ?? 0;
+  };
+
+  const getSimpleAverage = (player: Player): number | null => {
+    return playerSimpleAverages?.[player.id]?.globalAverage ?? null;
   };
 
   const sortedPlayers = [...players].sort((a, b) => {
@@ -93,6 +99,13 @@ export function PlayerList({
         aValue = a.createdAt;
         bValue = b.createdAt;
         break;
+      case "average": {
+        const aAvg = getSimpleAverage(a);
+        const bAvg = getSimpleAverage(b);
+        aValue = aAvg ?? -1;
+        bValue = bAvg ?? -1;
+        break;
+      }
       case "weightedScore": {
         const aWeighted = playerWeightedAverages?.[a.id]?.ponderatedGlobalAverage ?? 0;
         const bWeighted = playerWeightedAverages?.[b.id]?.ponderatedGlobalAverage ?? 0;
@@ -238,15 +251,21 @@ export function PlayerList({
             <tr>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("position")}
+              >
+                Posição{renderSortIndicator("position")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("player")}
               >
                 Jogador{renderSortIndicator("player")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
-                onClick={() => handleSort("position")}
+                onClick={() => handleSort("average")}
               >
-                Posição{renderSortIndicator("position")}
+                Média{renderSortIndicator("average")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
@@ -277,7 +296,7 @@ export function PlayerList({
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                   onClick={() => handleSort("weightedScore")}
                 >
-                  Pontuação{renderSortIndicator("weightedScore")}
+                  Ponderada{renderSortIndicator("weightedScore")}
                 </th>
               )}
               {onCompareToggle && (
@@ -290,6 +309,11 @@ export function PlayerList({
           <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
             {sortedPlayers.map((player) => (
               <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
+                    {player.position}
+                  </span>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <Link
                     to={`/division/players/${player.id}`}
@@ -298,10 +322,8 @@ export function PlayerList({
                     {player.name}
                   </Link>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                    {player.position}
-                  </span>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
+                  {getSimpleAverage(player)?.toFixed(2) ?? "—"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
                   {player.club}
@@ -316,7 +338,7 @@ export function PlayerList({
                   {getLastScouted(player)}
                 </td>
                 {boostedAttrs.length > 0 && (
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent-hover">
                     {playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage?.toFixed(2) ?? "—"}
                   </td>
                 )}
