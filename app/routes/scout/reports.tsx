@@ -1,23 +1,33 @@
 import type { Route } from "./+types/reports";
 import { useLoaderData, useSearchParams, Link } from "react-router";
-import { getReportsByScout, getPlayers, getScouts } from "~/data/data";
+import { getReportsByScout, getReports, getPlayers, getScouts } from "~/data/data";
 import { getScoutIdFromCookie } from "~/cookies.server";
 import { ReportsTable } from "~/components/reports-table";
 import { Select } from "~/components/ui/select";
 import { Label } from "~/components/ui/label";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const scoutId = await getScoutIdFromCookie(request);
+  const cookieScoutId = await getScoutIdFromCookie(request);
   const url = new URL(request.url);
-  const filterScoutId = url.searchParams.get("scoutId") || scoutId || undefined;
+  const filterScoutId = url.searchParams.get("scoutId");
+  const hasExplicitFilter = url.searchParams.has("scoutId");
 
-  const reports = filterScoutId
-    ? await getReportsByScout(filterScoutId, "submitted")
-    : [];
+  let reports;
+  if (hasExplicitFilter && !filterScoutId) {
+    const allReports = await getReports();
+    reports = allReports.filter((r) => r.status === "submitted");
+  } else if (hasExplicitFilter && filterScoutId) {
+    reports = await getReportsByScout(filterScoutId, "submitted");
+  } else {
+    reports = cookieScoutId
+      ? await getReportsByScout(cookieScoutId, "submitted")
+      : [];
+  }
+
   const players = await getPlayers();
   const scouts = await getScouts();
 
-  return { reports, players, scouts, scoutId: filterScoutId || null };
+  return { reports, players, scouts, scoutId: hasExplicitFilter ? filterScoutId : cookieScoutId };
 }
 
 export default function ReportsPage() {
@@ -39,14 +49,10 @@ export default function ReportsPage() {
         <Label htmlFor="scout-filter" className="mb-2">Filtrar por Observador</Label>
         <Select
           id="scout-filter"
-          value={searchParams.get("scoutId") || scoutId || ""}
+          value={searchParams.has("scoutId") ? (searchParams.get("scoutId") || "") : (scoutId || "")}
           onChange={(e) => {
             const newParams = new URLSearchParams(searchParams);
-            if (e.target.value) {
-              newParams.set("scoutId", e.target.value);
-            } else {
-              newParams.delete("scoutId");
-            }
+            newParams.set("scoutId", e.target.value);
             setSearchParams(newParams);
           }}
           className="max-w-xs"
