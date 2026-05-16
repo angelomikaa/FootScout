@@ -176,10 +176,10 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
 
             <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-2">
               <ResponsiveContainer width="100%" height={380}>
-                <RadarChart data={chartData}>
+                <RadarChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }} data={chartData}>
                   <PolarGrid stroke="var(--color-fm-border, #e5e7eb)" />
-                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 11, fill: "var(--color-fm-label, #6b7280)" }} />
-                  <PolarRadiusAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "var(--color-fm-text-muted, #9ca3af)" }} axisLine={false} />
+                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 10, fill: "var(--color-fm-label, #6b7280)" }} />
+                  <PolarRadiusAxis domain={[1, 6]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "var(--color-fm-text-muted, #9ca3af)" }} axisLine={false} />
                   <Radar name={selectedA!.name} dataKey="playerA" stroke="var(--color-fm-accent, #2563eb)" fill="var(--color-fm-accent, #2563eb)" fillOpacity={0.3} strokeWidth={2} />
                   <Radar name={selectedB!.name} dataKey="playerB" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} strokeWidth={2} />
                 </RadarChart>
