@@ -251,12 +251,6 @@ export function PlayerList({
             <tr>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
-                onClick={() => handleSort("position")}
-              >
-                Posição{renderSortIndicator("position")}
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("player")}
               >
                 Jogador{renderSortIndicator("player")}
@@ -266,6 +260,12 @@ export function PlayerList({
                 onClick={() => handleSort("average")}
               >
                 Média{renderSortIndicator("average")}
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                onClick={() => handleSort("position")}
+              >
+                Posição{renderSortIndicator("position")}
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
@@ -306,11 +306,6 @@ export function PlayerList({
 
               return (
                 <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                      {player.position}
-                    </span>
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <Link
                       to={`/division/players/${player.id}`}
@@ -348,6 +343,11 @@ export function PlayerList({
                         {simple?.toFixed(2) ?? "—"}
                       </span>
                     )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
+                      {player.position}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
                     {player.club}
