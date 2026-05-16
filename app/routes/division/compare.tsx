@@ -9,6 +9,7 @@ import { ATTRIBUTE_LABELS } from "~/components/attribute-grid";
 import { AttributeToggle } from "~/components/attribute-toggle";
 import { ComparisonDeltaTable } from "~/components/comparison-delta-table";
 import { PlayerSelector } from "~/components/player-selector";
+import { LoadingSpinner } from "~/components/loading-spinner";
 import type { Player } from "~/data/types";
 import type { Route } from "./+types/compare";
 
@@ -205,17 +206,21 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
 
       {(!canCompare || !averagesA || !averagesB) && (
         <div className="text-center py-16 bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border">
-          <svg className="w-12 h-12 mx-auto text-gray-300 dark:text-fm-text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Selecione dois jogadores</h3>
-          <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-2">
-            {!selectedA
-              ? "Escolha dois jogadores da mesma posição para comparar"
-              : !selectedB
-                ? `Agora selecione um ${selectedA.positionGroup} para comparar`
-                : "Carregando dados..."}
-          </p>
+          {canCompare && (!averagesA || !averagesB) ? (
+            <LoadingSpinner className="py-8" />
+          ) : (
+            <>
+              <svg className="w-12 h-12 mx-auto text-gray-300 dark:text-fm-text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Selecione dois jogadores</h3>
+              <p className="text-sm text-gray-500 dark:text-fm-text-secondary mt-2">
+                {!selectedA
+                  ? "Escolha dois jogadores da mesma posição para comparar"
+                  : `Agora selecione um ${selectedA.positionGroup} para comparar`}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
