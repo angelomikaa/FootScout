@@ -41,10 +41,10 @@ export default function PlayersPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const sortBy = searchParams.get("sortBy") || "createdAt";
+  const sortBy = searchParams.get("sortBy") || "average";
   const sortDirection = (searchParams.get("sortDirection") as "asc" | "desc") || "desc";
 
-  const effectiveSortBy = boostedAttrs.length > 0 && sortBy === "createdAt"
+  const effectiveSortBy = boostedAttrs.length > 0 && sortBy === "average"
     ? "weightedScore"
     : sortBy;
 
