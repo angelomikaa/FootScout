@@ -18,10 +18,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     reports = allReports.filter((r) => r.status === "submitted");
   } else if (hasExplicitFilter && filterScoutId) {
     reports = await getReportsByScout(filterScoutId, "submitted");
+  } else if (cookieScoutId) {
+    reports = await getReportsByScout(cookieScoutId, "submitted");
   } else {
-    reports = cookieScoutId
-      ? await getReportsByScout(cookieScoutId, "submitted")
-      : [];
+    const allReports = await getReports();
+    reports = allReports.filter((r) => r.status === "submitted");
   }
 
   const players = await getPlayers();
