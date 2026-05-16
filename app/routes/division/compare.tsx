@@ -31,6 +31,10 @@ export async function loader({ request }: { request: Request }) {
     throw new Response(null, { status: 404, statusText: "Player not found" });
   }
 
+  if (playerA.positionGroup !== playerB.positionGroup) {
+    throw new Response(null, { status: 302, headers: { Location: "/division/players" } });
+  }
+
   const [reportsA, reportsB] = await Promise.all([
     getReportsByPlayer(playerA.id),
     getReportsByPlayer(playerB.id),

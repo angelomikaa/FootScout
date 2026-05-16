@@ -16,6 +16,21 @@ const ATTRIBUTE_SHORT: Record<string, string> = {
   workRate: "EMP",
 };
 
+const ATTRIBUTE_FULL: Record<string, string> = {
+  pace: "Velocidade",
+  strength: "Força",
+  stamina: "Resistência",
+  agility: "Agilidade",
+  finishing: "Finalização",
+  passing: "Passe",
+  dribbling: "Drible",
+  firstTouch: "Primeiro Toque",
+  positioning: "Posicionamento",
+  awareness: "Consciência",
+  decisionMaking: "Decisão",
+  workRate: "Empenho",
+};
+
 const CATEGORIES = [
   {
     label: "Físico",
@@ -71,7 +86,7 @@ export function AttributeToggle({ boostedAttrs }: AttributeToggleProps) {
                 onClick={() => handleToggle(key)}
                 className={`
                   inline-flex items-center gap-1.5 select-none rounded-full px-3 py-1 text-xs font-semibold
-                  transition-colors duration-150 border
+                  transition-all duration-150 border
                   ${
                     isActive
                       ? "bg-fm-accent text-white border-fm-accent"
@@ -79,7 +94,7 @@ export function AttributeToggle({ boostedAttrs }: AttributeToggleProps) {
                   }
                 `}
               >
-                {ATTRIBUTE_SHORT[key] ?? key}
+                {isActive ? ATTRIBUTE_FULL[key] : ATTRIBUTE_SHORT[key]}
                 {isActive && (
                   <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
                 )}

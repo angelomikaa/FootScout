@@ -22,6 +22,7 @@ interface PlayerListProps {
   playerSimpleAverages?: Record<string, { globalAverage: number | null }>;
   selectedCompareIds?: string[];
   onCompareToggle?: (playerId: string) => void;
+  comparePositionGroup?: string | null;
 }
 
 export function PlayerList({
@@ -42,6 +43,7 @@ export function PlayerList({
   playerSimpleAverages = {},
   selectedCompareIds = [],
   onCompareToggle,
+  comparePositionGroup = null,
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
@@ -344,21 +346,32 @@ export function PlayerList({
                 )}
                 {onCompareToggle && (
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      type="button"
-                      onClick={() => onCompareToggle(player.id)}
-                      className={`
-                        inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium
-                        transition-colors duration-150
-                        ${
-                          selectedCompareIds.includes(player.id)
-                            ? "bg-fm-accent text-white hover:bg-fm-accent-hover"
-                            : "bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card"
-                        }
-                      `}
-                    >
-                      {selectedCompareIds.includes(player.id) ? "Selecionado" : "Comparar"}
-                    </button>
+                    {comparePositionGroup &&
+                     !selectedCompareIds.includes(player.id) &&
+                     player.positionGroup !== comparePositionGroup ? (
+                      <span
+                        className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-300 dark:bg-fm-card-alt dark:text-fm-text-muted cursor-not-allowed"
+                        title={`Só é possível comparar jogadores da mesma posição (${comparePositionGroup})`}
+                      >
+                        —
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onCompareToggle(player.id)}
+                        className={`
+                          inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium
+                          transition-colors duration-150
+                          ${
+                            selectedCompareIds.includes(player.id)
+                              ? "bg-fm-accent text-white hover:bg-fm-accent-hover"
+                              : "bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card"
+                          }
+                        `}
+                      >
+                        {selectedCompareIds.includes(player.id) ? "Selecionado" : "Comparar"}
+                      </button>
+                    )}
                   </td>
                 )}
               </tr>

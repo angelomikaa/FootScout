@@ -64,6 +64,14 @@ export default function PlayersPage() {
         newParams.delete("compare");
       }
     } else if (current.length < 2) {
+      // Position restriction: only same positionGroup can be compared
+      if (current.length === 1) {
+        const firstPlayer = players.find((p) => p.id === current[0]);
+        const targetPlayer = players.find((p) => p.id === playerId);
+        if (firstPlayer && targetPlayer && firstPlayer.positionGroup !== targetPlayer.positionGroup) {
+          return; // Silently reject cross-position comparison
+        }
+      }
       // Select (max 2)
       newParams.set("compare", [...current, playerId].join(","));
     }
@@ -182,6 +190,11 @@ export default function PlayersPage() {
         playerSimpleAverages={playerSimpleAverages}
         selectedCompareIds={selectedCompareIds}
         onCompareToggle={handleCompareToggle}
+        comparePositionGroup={
+          selectedCompareIds.length === 1
+            ? players.find((p) => p.id === selectedCompareIds[0])?.positionGroup ?? null
+            : null
+        }
       />
 
       {selectedCompareIds.length === 1 && (
