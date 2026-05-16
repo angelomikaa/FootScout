@@ -11,6 +11,7 @@ export default [
       route("players", "routes/division/players.tsx"),
       route("players/:id", "routes/division/players.$id.tsx"),
       route("compare", "routes/division/compare.tsx"),
+      route("decisions", "routes/division/decisions.ts"),
     ]),
   ]),
 ] satisfies RouteConfig;

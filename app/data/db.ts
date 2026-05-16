@@ -99,5 +99,39 @@ async function initSchema(client: ReturnType<typeof createClient>) {
     )`,
     `CREATE UNIQUE INDEX IF NOT EXISTS idx_reports_unique_submission
      ON reports (player_id, scout_id, match_date) WHERE status = 'submitted'`,
+    `CREATE TABLE IF NOT EXISTS player_decisions (
+      id TEXT PRIMARY KEY,
+      player_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (player_id) REFERENCES players(id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS decision_history (
+      id TEXT PRIMARY KEY,
+      player_id TEXT NOT NULL,
+      from_status TEXT,
+      to_status TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      FOREIGN KEY (player_id) REFERENCES players(id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS watchlists (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )`,
+    `CREATE TABLE IF NOT EXISTS watchlist_entries (
+      id TEXT PRIMARY KEY,
+      watchlist_id TEXT NOT NULL,
+      player_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (watchlist_id) REFERENCES watchlists(id),
+      FOREIGN KEY (player_id) REFERENCES players(id)
+    )`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_watchlist_name_user
+      ON watchlists (name, user_id)`,
   ]);
 }

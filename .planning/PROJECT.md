@@ -6,6 +6,7 @@ FootScout is a soccer scouting dashboard for U15 youth prospect capture. Scouts 
 
 **Shipped v1.0** with 8 phases: data foundation → staged report form → draft management → player list/search → player profiles → simple scoring + radar → ponderated scoring + breakdown → player comparison.
 **Shipped v1.1 Phase 9**: Navigation & UX Polish — fixed hotbar, unsaved changes guard, dedicated compare tab, home page cleanup.
+**In progress v1.2 Phase 10**: Division Decisions & Watchlists — DEC-01 complete (Sign/Monitor/Pass), DEC-02 pending (watchlists).
 
 ## Core Value
 
@@ -24,11 +25,11 @@ The weighted scoring engine — ponderated averages from 1 to 5 that shift based
 - ✓ SCORE-01 through SCORE-05: Simple averages, radar, ponderated weights, breakdown — v1.0
 - ✓ COMP-01 through COMP-03: Side-by-side comparison with dual radar — v1.0
 - ✓ NAV-01 through NAV-08: Fixed hotbar, dirty-form guard, dedicated compare route, home cleanup — v1.1 Phase 9
+- ✓ DEC-01: Division can flag players as Sign/Monitor/Pass from player list + profile — v1.2 Phase 10 (Plan 10-01)
 
 ### Active
 
-- [ ] Division can flag players as Sign, Monitor, or Pass (DEC-01)
-- [ ] Division can save players to named watchlists/shortlists (DEC-02)
+- [ ] Division can save players to named watchlists/shortlists (DEC-02) — v1.2 Phase 10 (Plan 10-02)
 - [ ] Scout consistency indicator showing variance when scouts disagree (AGGR-01)
 - [ ] Individual scout reports viewable separately within player profile (AGGR-02)
 - [ ] Development timeline showing score evolution across reports (TIME-01)
@@ -87,6 +88,9 @@ The weighted scoring engine — ponderated averages from 1 to 5 that shift based
 | Dedicated compare route over inline comparison | Inline made it hard to browse while comparing; dedicated tab allows parallel workflow | ✓ Good — combobox selectors are faster than toggle buttons |
 | Actions panel on home above prospects | "Novo Relatório" was buried in hotbar; prominent panel increases discoverability | ✓ Good — primary action is now above the fold |
 | Shared layout route (`_layout.tsx`) | DRY — header + hotbar on every page without duplicating in each route | ✓ Good — single source of truth for nav |
+| Decision workflow closes observation → scoring → decision loop | Division needs actionable outputs from scout data | ✓ Good — Sign/Monitor/Pass visible on list + profile |
+| One decision per player (latest wins) with history log | Simple model; audit trail preserves all changes | ✓ Good — decision_history table captures from/to/user/timestamp |
+| Turso DB for decisions (not JSON files) | Codebase already migrated to Turso | ✓ Good — consistent with existing data layer |
 
 ## Evolution
 
@@ -106,4 +110,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-15 after v1.1 Phase 9 (Navigation & UX Polish)*
+*Last updated: 2026-05-15 after v1.2 Phase 10 Plan 10-01 (DEC-01: Decision Workflow)*

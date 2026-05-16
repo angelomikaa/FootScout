@@ -27,9 +27,10 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 </details>
 
 <details>
-<summary>✅ v1.1 Navigation & UX Polish (Phase 9) — COMPLETE</summary>
+<summary>🚧 v1.2 Division Decisions & Watchlists (Phase 10) — IN PROGRESS</summary>
 
-- [x] Phase 9: Navigation & UX Polish (1/1 plans) — completed 2026-05-15
+- [x] Phase 10 Plan 10-01: DEC-01 Decision Workflow (1/1 plans) — completed 2026-05-15
+- [ ] Phase 10 Plan 10-02: DEC-02 Watchlists (0/1 plans) — pending
 
 </details>
 
@@ -57,4 +58,5 @@ Plans:
 | 7. Ponderated Scoring & Breakdown | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 8. Player Comparison | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 9. Navigation & UX Polish | v1.1 | 1/1 | Complete | 2026-05-15 |
+| 10. Division Decisions (DEC-01) | v1.2 | 1/2 | In Progress | — |
 | 10. Division Decisions & Watchlists | v1.2 | 0/2 | Planned | — |

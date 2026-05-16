@@ -1,8 +1,9 @@
 import { Link } from "react-router";
-import type { Player } from "../data/types";
+import type { Player, DecisionStatus } from "../data/types";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
 import { Search } from "lucide-react";
+import { DecisionToggle } from "./decision-toggle";
 
 interface PlayerListProps {
   players: Player[];
@@ -21,6 +22,10 @@ interface PlayerListProps {
   playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
   playerSimpleAverages?: Record<string, { globalAverage: number | null }>;
   onCompareHook?: (playerId: string) => void;
+  decisions?: Record<string, DecisionStatus | null>;
+  decisionFilter?: string;
+  onDecisionFilterChange?: (value: string) => void;
+  onDecisionChange?: (playerId: string, status: DecisionStatus | null) => void;
 }
 
 export function PlayerList({
@@ -40,6 +45,10 @@ export function PlayerList({
   playerWeightedAverages = {},
   playerSimpleAverages = {},
   onCompareHook,
+  decisions = {},
+  decisionFilter = "all",
+  onDecisionFilterChange,
+  onDecisionChange,
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
@@ -110,6 +119,17 @@ export function PlayerList({
         return sortDirection === "asc"
           ? aWeighted - bWeighted
           : bWeighted - aWeighted;
+      }
+      case "decision": {
+        const decisionRank = (s: DecisionStatus | null | undefined) => {
+          if (s === "sign") return 3;
+          if (s === "monitor") return 2;
+          if (s === "pass") return 1;
+          return 0;
+        };
+        aValue = decisionRank(decisions?.[a.id]);
+        bValue = decisionRank(decisions?.[b.id]);
+        break;
       }
       default:
         return 0;
@@ -242,6 +262,18 @@ export function PlayerList({
             </option>
           ))}
         </Select>
+        {onDecisionFilterChange && (
+          <Select
+            value={decisionFilter}
+            onChange={(e) => onDecisionFilterChange(e.target.value)}
+            className="w-full sm:w-40"
+          >
+            <option value="all">Todas as decisões</option>
+            <option value="sign">Sign</option>
+            <option value="monitor">Monitor</option>
+            <option value="pass">Pass</option>
+          </Select>
+        )}
       </div>
       <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-fm-border">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-fm-border">
@@ -259,12 +291,20 @@ export function PlayerList({
               >
                 Jogador{renderSortIndicator("player")}
               </th>
-              <th
+                <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("average")}
               >
                 Média{renderSortIndicator("average")}
               </th>
+              {onDecisionChange && (
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
+                  onClick={() => handleSort("decision")}
+                >
+                  Decisão{renderSortIndicator("decision")}
+                </th>
+              )}
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("club")}
@@ -323,6 +363,15 @@ export function PlayerList({
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
                   {getSimpleAverage(player)?.toFixed(2) ?? "—"}
                 </td>
+                {onDecisionChange && (
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <DecisionToggle
+                      playerId={player.id}
+                      currentStatus={decisions?.[player.id] ?? null}
+                      onStatusChange={(status) => onDecisionChange(player.id, status)}
+                    />
+                  </td>
+                )}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
                   {player.club}
                 </td>

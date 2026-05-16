@@ -9,18 +9,18 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 
 ## Current Position
 
-Phase: 9/9 — Navigation & UX Polish
-Status: ✅ Phase complete
-Last activity: 2026-05-15 — Phase 9 complete: hotbar navigation, unsaved changes guard, dedicated compare tab, home page cleanup, shared layout route
+Phase: 10/10 — Division Decisions & Watchlists (Plan 10-01 complete, Plan 10-02 pending)
+Status: 🚧 Phase in progress — Plan 10-01 (DEC-01) done, Plan 10-02 (DEC-02) next
+Last activity: 2026-05-15 — Plan 10-01 complete: decision types/DB/CRUD, DecisionToggle, wired into player list + profile
 
-Progress: [██████████] 100% (v1.0 + v1.1 Phase 9)
+Progress: [██████████░] 90% (v1.0 + v1.1 Phase 9 + v1.2 Phase 10 Plan 10-01)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: ~1 hour
-- Total execution time: ~17 hours
+- Total execution time: ~18 hours
 
 **By Phase:**
 
@@ -35,9 +35,10 @@ Progress: [██████████] 100% (v1.0 + v1.1 Phase 9)
 | 7 | 2 | 2 | ~45 min |
 | 8 | 2 | 2 | ~45 min |
 | 9 | 1 | 1 | ~1 hour |
+| 10 | 1 | 1 | ~1 hour |
 
 **Recent Trend:**
-- Last 5 plans: 16 plans completed
+- Last 5 plans: 17 plans completed
 - Trend: Accelerating
 
 *Updated after each plan completion*
@@ -54,6 +55,7 @@ Recent decisions affecting next milestone:
 - Comparison view highly valued — decision workflow (Sign/Monitor/Pass) is natural next step
 - Hotbar navigation replaces redundant home page cards — cleaner, more discoverable
 - Dedicated compare route with combobox selectors is faster than inline toggle buttons
+- Decision workflow (Sign/Monitor/Pass) closes the loop from observation → scoring → decision
 
 ### Pending Todos
 
@@ -76,5 +78,5 @@ Items acknowledged and carried forward from v1.0 milestone close:
 ## Session Continuity
 
 Last session: 2026-05-15
-Stopped at: Phase 9 (Navigation & UX Polish) complete — ready for next v1.1 features
+Stopped at: Phase 10 Plan 10-01 (DEC-01) complete — Plan 10-02 (DEC-02) next
 Resume file: .planning/ROADMAP.md

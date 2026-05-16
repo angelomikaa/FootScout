@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type { InValue } from "@libsql/client";
 import { getDb } from "./db.js";
-import type { Player, NewPlayer, Report, NewReport, Scout, NewScout, PositionGroup, Position, PreferredFoot, AttributeScore } from "./types.js";
-import { playerSchema, reportSchema, scoutSchema } from "./types.js";
+import type { Player, NewPlayer, Report, NewReport, Scout, NewScout, PositionGroup, Position, PreferredFoot, AttributeScore, DecisionStatus, PlayerDecision, DecisionHistoryEntry, Watchlist, WatchlistEntry } from "./types.js";
+import { playerSchema, reportSchema, scoutSchema, playerDecisionSchema, decisionHistoryEntrySchema, watchlistSchema, watchlistEntrySchema } from "./types.js";
 
 function rowToPlayer(row: Record<string, unknown>): Player {
   return {
@@ -362,4 +362,198 @@ export async function getPlayerReportStats(): Promise<
     };
   }
   return stats;
+}
+
+function rowToPlayerDecision(row: Record<string, unknown>): PlayerDecision {
+  return {
+    id: row.id as string,
+    playerId: row.player_id as string,
+    status: row.status as DecisionStatus,
+    userId: row.user_id as string,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
+
+function rowToDecisionHistoryEntry(row: Record<string, unknown>): DecisionHistoryEntry {
+  return {
+    id: row.id as string,
+    playerId: row.player_id as string,
+    from: (row.from_status as DecisionStatus) ?? null,
+    to: row.to_status as DecisionStatus,
+    userId: row.user_id as string,
+    timestamp: row.timestamp as string,
+  };
+}
+
+function rowToWatchlist(row: Record<string, unknown>): Watchlist {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    userId: row.user_id as string,
+    createdAt: row.created_at as string,
+  };
+}
+
+function rowToWatchlistEntry(row: Record<string, unknown>): WatchlistEntry {
+  return {
+    id: row.id as string,
+    watchlistId: row.watchlist_id as string,
+    playerId: row.player_id as string,
+    createdAt: row.created_at as string,
+  };
+}
+
+// DEC-01: Decision CRUD
+
+export async function getPlayerDecision(playerId: string): Promise<PlayerDecision | null> {
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM player_decisions WHERE player_id = ? LIMIT 1", [playerId]);
+  if (result.rows.length === 0) return null;
+  return rowToPlayerDecision(result.rows[0]);
+}
+
+export async function getAllPlayerDecisions(): Promise<PlayerDecision[]> {
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM player_decisions");
+  return result.rows.map(rowToPlayerDecision);
+}
+
+export async function setPlayerDecision(input: { playerId: string; status: DecisionStatus; userId: string }): Promise<{ decision: PlayerDecision; history: DecisionHistoryEntry }> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+
+  const existing = await db.execute("SELECT * FROM player_decisions WHERE player_id = ? LIMIT 1", [input.playerId]);
+  const oldStatus = existing.rows.length > 0 ? (existing.rows[0].status as DecisionStatus) : null;
+
+  let decisionRow: Record<string, unknown>;
+
+  if (existing.rows.length > 0) {
+    const result = await db.execute(
+      "UPDATE player_decisions SET status = ?, updated_at = ? WHERE player_id = ? RETURNING *",
+      [input.status, now, input.playerId]
+    );
+    decisionRow = result.rows[0];
+  } else {
+    const result = await db.execute(
+      "INSERT INTO player_decisions (id, player_id, status, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?) RETURNING *",
+      [randomUUID(), input.playerId, input.status, input.userId, now, now]
+    );
+    decisionRow = result.rows[0];
+  }
+
+  const historyResult = await db.execute(
+    "INSERT INTO decision_history (id, player_id, from_status, to_status, user_id, timestamp) VALUES (?, ?, ?, ?, ?, ?) RETURNING *",
+    [randomUUID(), input.playerId, oldStatus, input.status, input.userId, now]
+  );
+
+  return {
+    decision: playerDecisionSchema.parse(rowToPlayerDecision(decisionRow)),
+    history: decisionHistoryEntrySchema.parse(rowToDecisionHistoryEntry(historyResult.rows[0])),
+  };
+}
+
+export async function clearPlayerDecision(playerId: string, _userId: string): Promise<void> {
+  const db = await getDb();
+  await db.execute("DELETE FROM player_decisions WHERE player_id = ?", [playerId]);
+}
+
+export async function getDecisionHistory(playerId: string): Promise<DecisionHistoryEntry[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM decision_history WHERE player_id = ? ORDER BY timestamp DESC",
+    [playerId]
+  );
+  return result.rows.map(rowToDecisionHistoryEntry);
+}
+
+// DEC-02: Watchlist CRUD
+
+export async function getWatchlistsByUser(userId: string): Promise<Watchlist[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM watchlists WHERE user_id = ? ORDER BY created_at DESC",
+    [userId]
+  );
+  return result.rows.map(rowToWatchlist);
+}
+
+export async function getWatchlistById(id: string): Promise<Watchlist | null> {
+  const db = await getDb();
+  const result = await db.execute("SELECT * FROM watchlists WHERE id = ? LIMIT 1", [id]);
+  if (result.rows.length === 0) return null;
+  return rowToWatchlist(result.rows[0]);
+}
+
+export async function createWatchlist(input: { name: string; userId: string }): Promise<Watchlist> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  try {
+    const result = await db.execute(
+      "INSERT INTO watchlists (id, name, user_id, created_at) VALUES (?, ?, ?, ?) RETURNING *",
+      [randomUUID(), input.name, input.userId, now]
+    );
+    return rowToWatchlist(result.rows[0]);
+  } catch {
+    throw new Error(`Watchlist '${input.name}' already exists`);
+  }
+}
+
+export async function renameWatchlist(id: string, name: string, userId: string): Promise<Watchlist> {
+  const db = await getDb();
+  const result = await db.execute(
+    "UPDATE watchlists SET name = ? WHERE id = ? AND user_id = ? RETURNING *",
+    [name, id, userId]
+  );
+  if (result.rows.length === 0) throw new Error("Watchlist not found or not owned by user");
+  return rowToWatchlist(result.rows[0]);
+}
+
+export async function deleteWatchlist(id: string, userId: string): Promise<void> {
+  const db = await getDb();
+  await db.execute("DELETE FROM watchlist_entries WHERE watchlist_id = ?", [id]);
+  await db.execute("DELETE FROM watchlists WHERE id = ? AND user_id = ?", [id, userId]);
+}
+
+export async function getWatchlistEntries(watchlistId: string): Promise<WatchlistEntry[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM watchlist_entries WHERE watchlist_id = ? ORDER BY created_at DESC",
+    [watchlistId]
+  );
+  return result.rows.map(rowToWatchlistEntry);
+}
+
+export async function addPlayerToWatchlist(watchlistId: string, playerId: string): Promise<WatchlistEntry> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  const result = await db.execute(
+    "INSERT OR IGNORE INTO watchlist_entries (id, watchlist_id, player_id, created_at) VALUES (?, ?, ?, ?) RETURNING *",
+    [randomUUID(), watchlistId, playerId, now]
+  );
+  if (result.rows.length === 0) {
+    const existingResult = await db.execute(
+      "SELECT * FROM watchlist_entries WHERE watchlist_id = ? AND player_id = ? LIMIT 1",
+      [watchlistId, playerId]
+    );
+    return rowToWatchlistEntry(existingResult.rows[0]);
+  }
+  return rowToWatchlistEntry(result.rows[0]);
+}
+
+export async function removePlayerFromWatchlist(watchlistId: string, playerId: string): Promise<void> {
+  const db = await getDb();
+  await db.execute(
+    "DELETE FROM watchlist_entries WHERE watchlist_id = ? AND player_id = ?",
+    [watchlistId, playerId]
+  );
+}
+
+export async function getWatchlistsForPlayer(playerId: string): Promise<Watchlist[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT w.* FROM watchlists w JOIN watchlist_entries we ON w.id = we.watchlist_id WHERE we.player_id = ?",
+    [playerId]
+  );
+  return result.rows.map(rowToWatchlist);
 }

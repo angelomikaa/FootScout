@@ -125,3 +125,49 @@ export const scoutSchema = z.object({
 });
 export type Scout = z.infer<typeof scoutSchema>;
 export type NewScout = Omit<Scout, "id" | "createdAt">;
+
+// DEC-01: Decision status enum
+export const decisionStatusSchema = z.enum(["sign", "monitor", "pass"]);
+export type DecisionStatus = z.infer<typeof decisionStatusSchema>;
+
+// DEC-01: Current decision per player (one decision per player, latest wins)
+export const playerDecisionSchema = z.object({
+  id: z.string(),
+  playerId: z.string(),
+  status: decisionStatusSchema,
+  userId: z.string(),
+  createdAt: isoDateTimeSchema,
+  updatedAt: isoDateTimeSchema,
+});
+export type PlayerDecision = z.infer<typeof playerDecisionSchema>;
+export type NewPlayerDecision = Omit<PlayerDecision, "id" | "createdAt" | "updatedAt">;
+
+// DEC-01: Full audit trail
+export const decisionHistoryEntrySchema = z.object({
+  id: z.string(),
+  playerId: z.string(),
+  from: decisionStatusSchema.nullable(),
+  to: decisionStatusSchema,
+  userId: z.string(),
+  timestamp: isoDateTimeSchema,
+});
+export type DecisionHistoryEntry = z.infer<typeof decisionHistoryEntrySchema>;
+
+// DEC-02: Named watchlist owned by user
+export const watchlistSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  userId: z.string(),
+  createdAt: isoDateTimeSchema,
+});
+export type Watchlist = z.infer<typeof watchlistSchema>;
+export type NewWatchlist = Omit<Watchlist, "id" | "createdAt">;
+
+// DEC-02: Player membership in watchlist
+export const watchlistEntrySchema = z.object({
+  id: z.string(),
+  watchlistId: z.string(),
+  playerId: z.string(),
+  createdAt: isoDateTimeSchema,
+});
+export type WatchlistEntry = z.infer<typeof watchlistEntrySchema>;
