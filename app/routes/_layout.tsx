@@ -3,7 +3,7 @@ import { Hotbar } from "~/components/hotbar";
 
 export default function LayoutRoute() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-fm-bg">
+    <div className="min-h-screen bg-gray-50 dark:bg-fm-bg pb-16 lg:pb-0">
       <header className="bg-white dark:bg-fm-card border-b border-fm-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text">
