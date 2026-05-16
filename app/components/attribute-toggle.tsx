@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router";
 import { ATTRIBUTE_KEYS } from "~/lib/scoring/player-average";
 
 const ATTRIBUTE_SHORT: Record<string, string> = {
-  pace: "PAC",
+  pace: "VEL",
   strength: "FOR",
   stamina: "RES",
   agility: "AGI",
