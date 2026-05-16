@@ -7,7 +7,8 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-8 (shipped 2026-05-15) — [Archive](milestones/v1.0-ROADMAP.md)
-- 🚧 **v1.1 Navigation & UX Polish** — Phase 9 (in progress 2026-05-15)
+- ✅ **v1.1 Navigation & UX Polish** — Phase 9 (complete 2026-05-15)
+- 🚧 **v1.2 Division Decisions & Watchlists** — Phase 10 (planning 2026-05-15)
 
 ## Phases
 
@@ -26,9 +27,20 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 </details>
 
 <details>
-<summary>🚧 v1.1 Navigation & UX Polish (Phase 9) — IN PROGRESS</summary>
+<summary>✅ v1.1 Navigation & UX Polish (Phase 9) — COMPLETE</summary>
 
 - [x] Phase 9: Navigation & UX Polish (1/1 plans) — completed 2026-05-15
+
+</details>
+
+<details>
+<summary>🚧 v1.2 Division Decisions & Watchlists (Phase 10) — PLANNED</summary>
+
+- [ ] Phase 10: Division Decisions & Watchlists (2/2 plans) — planned 2026-05-15
+
+Plans:
+- [ ] 10-01-PLAN.md — Data layer + DEC-01 decision workflow (Sign/Monitor/Pass) wired into player list + profile
+- [ ] 10-02-PLAN.md — DEC-02 watchlist workflow (create/manage lists, add/remove players, badges, detail pages)
 
 </details>
 
@@ -45,3 +57,4 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 | 7. Ponderated Scoring & Breakdown | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 8. Player Comparison | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 9. Navigation & UX Polish | v1.1 | 1/1 | Complete | 2026-05-15 |
+| 10. Division Decisions & Watchlists | v1.2 | 0/2 | Planned | — |
