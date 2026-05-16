@@ -17,8 +17,8 @@ export function Hotbar({ draftCount }: HotbarProps) {
   return (
     <nav className="bg-white dark:bg-fm-card border-b border-fm-border sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-12">
-          <div className="flex items-center gap-1">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-between gap-1 sm:gap-0 py-2 sm:h-12">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 w-full sm:w-auto">
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.to ||
                 (item.to !== "/" && location.pathname.startsWith(item.to));
@@ -28,7 +28,7 @@ export function Hotbar({ draftCount }: HotbarProps) {
                   key={item.to}
                   to={item.to}
                   className={`
-                    flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start
                     ${
                       isActive
                         ? "bg-fm-accent/10 text-fm-accent"
@@ -48,7 +48,7 @@ export function Hotbar({ draftCount }: HotbarProps) {
           {draftCount > 0 && (
             <Link
               to="/scout/report"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-sm font-medium hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-sm font-medium hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors justify-center sm:justify-start"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

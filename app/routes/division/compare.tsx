@@ -138,7 +138,7 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">Comparação de Jogadores</h1>
 
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-fm-label mb-2">Jogador A</label>
           <PlayerSelector players={playersWithData} value={selectedA} onChange={(player) => {
@@ -172,7 +172,7 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
         <>
           <AttributeToggle boostedAttrs={boostedAttrs} />
 
-          <div className="grid grid-cols-[1fr_2fr_1fr] gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-6 mb-6">
             {renderScoreCard(selectedA!, averagesA, "var(--color-fm-accent, #2563eb)", "var(--color-fm-accent-hover, #1d4ed8)")}
 
             <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-2">

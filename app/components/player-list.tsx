@@ -245,7 +245,7 @@ export function PlayerList({
           ))}
         </Select>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-fm-border">
+      <div className="hidden sm:block overflow-x-auto rounded-lg border border-gray-200 dark:border-fm-border">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-fm-border">
           <thead className="bg-gray-50 dark:bg-fm-card-alt">
             <tr>
@@ -377,6 +377,86 @@ export function PlayerList({
             })}
           </tbody>
         </table>
+      </div>
+
+      <div className="block sm:hidden space-y-3">
+        {sortedPlayers.map((player) => {
+          const simple = playerSimpleAverages?.[player.id]?.globalAverage ?? null;
+          const ponderated = playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage ?? null;
+          const delta = hasWeights && simple !== null && ponderated !== null ? ponderated - simple : 0;
+
+          return (
+            <div key={player.id} className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
+              <div className="flex items-start justify-between mb-3">
+                <Link
+                  to={`/division/players/${player.id}`}
+                  className="text-sm font-semibold text-gray-900 dark:text-fm-text hover:text-fm-accent dark:hover:text-fm-accent"
+                >
+                  {player.name}
+                </Link>
+                {hasWeights && ponderated !== null ? (
+                  <div className="flex items-baseline gap-1.5">
+                    {simple !== null && (
+                      <span className="text-xs text-gray-400 dark:text-fm-text-muted">
+                        {simple.toFixed(2)}
+                      </span>
+                    )}
+                    <span className={`text-lg font-bold ${
+                      delta > 0.005
+                        ? "text-green-600 dark:text-green-400"
+                        : delta < -0.005
+                          ? "text-red-500 dark:text-red-400"
+                          : "text-fm-accent"
+                    }`}>
+                      {ponderated.toFixed(2)}
+                    </span>
+                    {delta > 0.005 && (
+                      <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>
+                    )}
+                    {delta < -0.005 && (
+                      <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-lg font-bold text-fm-accent">
+                    {simple?.toFixed(2) ?? "—"}
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                <div className="text-gray-400 dark:text-fm-text-muted">
+                  <span className="font-medium text-gray-500 dark:text-fm-label">Posição:</span>{" "}
+                  <span className="text-gray-600 dark:text-fm-text-secondary">{player.position}</span>
+                </div>
+                <div className="text-gray-400 dark:text-fm-text-muted">
+                  <span className="font-medium text-gray-500 dark:text-fm-label">Clube:</span>{" "}
+                  <span className="text-gray-600 dark:text-fm-text-secondary">{player.club}</span>
+                </div>
+                <div className="text-gray-400 dark:text-fm-text-muted">
+                  <span className="font-medium text-gray-500 dark:text-fm-label">Idade:</span>{" "}
+                  <span className="text-gray-600 dark:text-fm-text-secondary">{calculateAge(player.dateOfBirth)}</span>
+                </div>
+                <div className="text-gray-400 dark:text-fm-text-muted">
+                  <span className="font-medium text-gray-500 dark:text-fm-label">Relatórios:</span>{" "}
+                  <span className="text-gray-600 dark:text-fm-text-secondary">{getReportCount(player)}</span>
+                </div>
+                <div className="col-span-2 text-gray-400 dark:text-fm-text-muted">
+                  <span className="font-medium text-gray-500 dark:text-fm-label">Últ. Avaliação:</span>{" "}
+                  <span className="text-gray-600 dark:text-fm-text-secondary">{getLastScouted(player)}</span>
+                </div>
+              </div>
+              {onCompareHook && (
+                <button
+                  type="button"
+                  onClick={() => onCompareHook(player.id)}
+                  className="mt-3 w-full text-center px-3 py-2 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card transition-colors"
+                >
+                  Comparar
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
