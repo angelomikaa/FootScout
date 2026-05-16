@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { getPlayers, getReports, getScouts, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
 import { calculateOverallAverage } from "~/lib/scoring/average";
 import { calculatePlayerAverages } from "~/lib/scoring/player-average";
+import { Hotbar } from "~/components/hotbar";
 import type { Route } from "./+types/home";
 import type { Player } from "~/data/types";
 
@@ -104,16 +105,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-fm-bg">
-      <header className="bg-fm-card dark:bg-fm-card border-b border-fm-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-fm-text">
-            Foot<span className="text-fm-accent">Scout</span>
-          </h1>
-          <p className="text-fm-text-secondary mt-1">
-            Painel de Observação de Jogadores Sub-15
-          </p>
-        </div>
-      </header>
+      <Hotbar draftCount={draftReports.length} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {justSubmitted && (
@@ -175,113 +167,61 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Melhores Prospectos</h2>
-                <Link
-                  to="/division/players"
-                  className="text-sm text-fm-accent hover:text-fm-accent-hover"
-                >
-                  Buscar com filtros &rarr;
-                </Link>
-              </div>
-
-              {Object.keys(bestPerPosition).length === 0 ? (
-                <div className="p-8 text-center">
-                  <p className="text-gray-500 dark:text-fm-text-secondary">Sem dados ainda — avalie jogadores para ver os melhores por posição</p>
-                  <Link
-                    to="/scout/report"
-                    className="inline-block mt-4 text-sm text-fm-accent hover:text-fm-accent-hover"
-                  >
-                    Criar primeiro relatório &rarr;
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6">
-                  {Object.entries(bestPerPosition)
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([position, { player, average }]) => (
-                      <Link
-                        key={position}
-                        to={`/division/players/${player.id}`}
-                        className="group relative bg-gray-50 dark:bg-fm-card-alt rounded-lg border border-gray-200 dark:border-fm-border p-4 hover:border-fm-accent dark:hover:border-fm-accent transition-colors"
-                      >
-                        <div className="absolute top-2 right-2">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-fm-accent/10 text-fm-accent">
-                            {position}
-                          </span>
-                        </div>
-                        <div className="mt-6">
-                          <p className="text-sm font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent truncate">
-                            {player.name}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-fm-text-muted mt-0.5 truncate">
-                            {player.club}
-                          </p>
-                          <p className="text-lg font-bold text-fm-accent mt-2">
-                            {average.toFixed(2)}
-                          </p>
-                          <p className="text-xs text-gray-400 dark:text-fm-text-muted">
-                            {reportStats[player.id]?.count ?? 0} relatório{reportStats[player.id]?.count !== 1 ? "s" : ""}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                </div>
-              )}
-            </div>
-          </div>
-
+        <div className="mb-8">
           <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Busca Avançada</h2>
-            </div>
-            <div className="p-6 space-y-3">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">Melhores Prospectos</h2>
               <Link
                 to="/division/players"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
+                className="text-sm text-fm-accent hover:text-fm-accent-hover"
               >
-                <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Buscar Jogadores</h4>
-                  <p className="text-xs text-gray-500 dark:text-fm-text-muted">Nome, posição, clube</p>
-                </div>
-              </Link>
-              <Link
-                to="/division/players?position=DEF"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-              >
-                <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Filtrar por Posição</h4>
-                  <p className="text-xs text-gray-500 dark:text-fm-text-muted">GK, DEF, MID, FWD</p>
-                </div>
-              </Link>
-              <Link
-                to="/division/players?club="
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-              >
-                <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Filtrar por Clube</h4>
-                  <p className="text-xs text-gray-500 dark:text-fm-text-muted">Todos os clubes</p>
-                </div>
+                Buscar com filtros &rarr;
               </Link>
             </div>
+
+            {Object.keys(bestPerPosition).length === 0 ? (
+              <div className="p-8 text-center">
+                <p className="text-gray-500 dark:text-fm-text-secondary">Sem dados ainda — avalie jogadores para ver os melhores por posição</p>
+                <Link
+                  to="/scout/report"
+                  className="inline-block mt-4 text-sm text-fm-accent hover:text-fm-accent-hover"
+                >
+                  Criar primeiro relatório &rarr;
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6">
+                {Object.entries(bestPerPosition)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([position, { player, average }]) => (
+                    <Link
+                      key={position}
+                      to={`/division/players/${player.id}`}
+                      className="group relative bg-gray-50 dark:bg-fm-card-alt rounded-lg border border-gray-200 dark:border-fm-border p-4 hover:border-fm-accent dark:hover:border-fm-accent transition-colors"
+                    >
+                      <div className="absolute top-2 right-2">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-fm-accent/10 text-fm-accent">
+                          {position}
+                        </span>
+                      </div>
+                      <div className="mt-6">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-fm-text group-hover:text-fm-accent truncate">
+                          {player.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-fm-text-muted mt-0.5 truncate">
+                          {player.club}
+                        </p>
+                        <p className="text-lg font-bold text-fm-accent mt-2">
+                          {average.toFixed(2)}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-fm-text-muted">
+                          {reportStats[player.id]?.count ?? 0} relatório{reportStats[player.id]?.count !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -395,140 +335,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                     </span>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-5 gap-6 mb-8">
-          <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                  <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Área do Observador
-                </h2>
-                <span className="text-xs font-medium text-gray-400 dark:text-fm-text-muted">
-                  {submittedReports.length} relatório{submittedReports.length !== 1 ? "s" : ""} enviado{submittedReports.length !== 1 ? "s" : ""}
-                </span>
-              </div>
-              <div className="p-6">
-                <Link
-                  to="/scout/report"
-                  className="flex items-center justify-between w-full p-5 rounded-xl bg-fm-accent hover:bg-fm-accent-hover text-white transition-colors group mb-4"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-base">Novo Relatório</h4>
-                      <p className="text-sm text-white/80">
-                        Avaliar jogador com formulário em etapas
-                      </p>
-                    </div>
-                  </div>
-                  <svg className="w-5 h-5 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Link
-                    to="/scout/reports"
-                    className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Meus Relatórios</h4>
-                      <p className="text-xs text-gray-500 dark:text-fm-text-muted">Ver e filtrar</p>
-                    </div>
-                  </Link>
-
-                  {draftReports.length > 0 ? (
-                    <Link
-                      to="/scout/report"
-                      className="flex items-center gap-3 p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/10 hover:border-amber-300 dark:hover:border-amber-700 transition-colors group"
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-amber-800 dark:text-amber-300 group-hover:text-amber-900">Continuar Rascunho</h4>
-                        <p className="text-xs text-amber-600 dark:text-amber-400">{draftReports.length} pendente{draftReports.length > 1 ? "s" : ""}</p>
-                      </div>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border opacity-50">
-                      <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-fm-card-alt flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 text-gray-400 dark:text-fm-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-400 dark:text-fm-text-muted">Sem Rascunhos</h4>
-                        <p className="text-xs text-gray-400 dark:text-fm-text-muted">Nenhum pendente</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border overflow-hidden h-full">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-fm-border flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text flex items-center gap-2">
-                  <svg className="w-5 h-5 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" />
-                  </svg>
-                  Área da Divisão
-                </h2>
-                <span className="text-xs font-medium text-gray-400 dark:text-fm-text-muted">
-                  {players.length} jogador{players.length !== 1 ? "es" : ""}
-                </span>
-              </div>
-              <div className="p-6 space-y-3">
-                <Link
-                  to="/division/players"
-                  className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                    <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Lista de Jogadores</h4>
-                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Buscar, filtrar e avaliar</p>
-                  </div>
-                </Link>
-
-                <Link
-                  to="/division/players"
-                  className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
-                    <svg className="w-4 h-4 text-fm-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Comparar Jogadores</h4>
-                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Selecionar dois na lista</p>
-                  </div>
-                </Link>
               </div>
             </div>
           </div>

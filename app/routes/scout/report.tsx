@@ -1,5 +1,5 @@
 import type { Route } from "./+types/report";
-import { redirect, Link } from "react-router";
+import { redirect } from "react-router";
 import { getPlayers, getScouts, createPlayer, createReport, upsertDraft, submitDraft, deleteDraft, getDraftByScout, getSubmittedReportByPlayerScoutDate } from "~/data/data";
 import { reportFormSchema } from "~/data/form-schema";
 import { ScoutReportForm } from "~/components/scout-report-form";
@@ -164,12 +164,6 @@ return redirect("/?submitted=true", {
 export default function ScoutReportRoute({ loaderData }: Route.ComponentProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Link
-        to="/"
-        className="inline-flex items-center text-sm text-fm-accent hover:text-fm-accent-hover mb-6"
-      >
-        &larr; Voltar ao início
-      </Link>
       <ScoutReportForm players={loaderData?.players || []} scouts={loaderData?.scouts || []} draft={loaderData?.draft || null} />
     </div>
   );

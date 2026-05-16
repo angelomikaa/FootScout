@@ -20,9 +20,7 @@ interface PlayerListProps {
   boostedAttrs?: string[];
   playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
   playerSimpleAverages?: Record<string, { globalAverage: number | null }>;
-  selectedCompareIds?: string[];
-  onCompareToggle?: (playerId: string) => void;
-  comparePositionGroup?: string | null;
+  onCompareHook?: (playerId: string) => void;
 }
 
 export function PlayerList({
@@ -41,9 +39,7 @@ export function PlayerList({
   boostedAttrs = [],
   playerWeightedAverages = {},
   playerSimpleAverages = {},
-  selectedCompareIds = [],
-  onCompareToggle,
-  comparePositionGroup = null,
+  onCompareHook,
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
@@ -301,7 +297,7 @@ export function PlayerList({
                   Ponderada{renderSortIndicator("weightedScore")}
                 </th>
               )}
-              {onCompareToggle && (
+              {onCompareHook && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
                   Comparar
                 </th>
@@ -344,34 +340,15 @@ export function PlayerList({
                     {playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage?.toFixed(2) ?? "—"}
                   </td>
                 )}
-                {onCompareToggle && (
+                {onCompareHook && (
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {comparePositionGroup &&
-                     !selectedCompareIds.includes(player.id) &&
-                     player.positionGroup !== comparePositionGroup ? (
-                      <span
-                        className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-300 dark:bg-fm-card-alt dark:text-fm-text-muted cursor-not-allowed"
-                        title={`Só é possível comparar jogadores da mesma posição (${comparePositionGroup})`}
-                      >
-                        —
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => onCompareToggle(player.id)}
-                        className={`
-                          inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium
-                          transition-colors duration-150
-                          ${
-                            selectedCompareIds.includes(player.id)
-                              ? "bg-fm-accent text-white hover:bg-fm-accent-hover"
-                              : "bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card"
-                          }
-                        `}
-                      >
-                        {selectedCompareIds.includes(player.id) ? "Selecionado" : "Comparar"}
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => onCompareHook(player.id)}
+                      className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card transition-colors"
+                    >
+                      Comparar
+                    </button>
                   </td>
                 )}
               </tr>

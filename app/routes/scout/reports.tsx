@@ -36,13 +36,6 @@ export default function ReportsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Link
-        to="/"
-        className="inline-flex items-center text-sm text-fm-accent hover:text-fm-accent-hover mb-6"
-      >
-        &larr; Voltar ao início
-      </Link>
-
       <h1 className="text-2xl font-bold text-gray-900 dark:text-fm-text mb-6">Meus Relatórios</h1>
 
       <div className="mb-6">

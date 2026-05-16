@@ -20,6 +20,7 @@ import { Select } from "./ui/select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
+import { useNavigationGuard } from "./navigation-guard";
 
 interface ScoutReportFormProps {
 players: Player[];
@@ -57,6 +58,7 @@ const matchNotesAttributes = [
 
 export function ScoutReportForm({ players, scouts, draft }: ScoutReportFormProps) {
 const fetcher = useFetcher();
+const { setDirty } = useNavigationGuard();
 const [currentStep, setCurrentStep] = useState(draft?.currentStep || 0);
 const [hasResumed, setHasResumed] = useState(false);
 const [hasResumedForAutoSave, setHasResumedForAutoSave] = useState(false);
@@ -99,6 +101,13 @@ matchNotes: { attitude: null, coachability: null, intensity: null, impact: null,
 });
 
 const { register, control, watch, setValue, formState: { errors }, trigger, clearErrors, handleSubmit } = form;
+
+const watchedValues = watch();
+useEffect(() => {
+  if (hasResumedForAutoSave || currentStep > 0) {
+    setDirty(true);
+  }
+}, [watchedValues, currentStep, hasResumedForAutoSave, setDirty]);
 
 const isNewPlayer = watch("isNewPlayer");
 const navigation = useNavigation();
