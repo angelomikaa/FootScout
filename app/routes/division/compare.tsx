@@ -6,7 +6,7 @@ import {
 import { getPlayers, getReportsByPlayer, getPlayerReportStats } from "~/data/data";
 import { parseWeightParams, calculatePonderatedAverages, ATTRIBUTE_KEYS } from "~/lib/scoring/player-average";
 import { ATTRIBUTE_LABELS } from "~/components/attribute-grid";
-import { AttributeToggle } from "~/components/attribute-toggle";
+import { ATTRIBUTE_SHORT, AttributeToggle } from "~/components/attribute-toggle";
 import { ComparisonDeltaTable } from "~/components/comparison-delta-table";
 import { PlayerSelector } from "~/components/player-selector";
 import { LoadingSpinner } from "~/components/loading-spinner";
@@ -63,6 +63,14 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
   useEffect(() => { setAveragesA(preAveragesA); }, [preAveragesA]);
   useEffect(() => { setAveragesB(preAveragesB); }, [preAveragesB]);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const playersWithData = useMemo(
     () => players.filter((p) => playersWithReportsSet.has(p.id)),
     [players, playersWithReportsSet],
@@ -80,12 +88,13 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
 
   const chartData = useMemo(() => {
     if (!averagesA || !averagesB) return [];
+    const labels = isMobile ? ATTRIBUTE_SHORT : ATTRIBUTE_LABELS;
     return ATTRIBUTE_KEYS.map((key) => ({
-      attribute: ATTRIBUTE_LABELS[key] ?? key,
+      attribute: labels[key] ?? key,
       playerA: averagesA.attributes[key] ?? 0,
       playerB: averagesB.attributes[key] ?? 0,
     }));
-  }, [averagesA, averagesB]);
+  }, [averagesA, averagesB, isMobile]);
 
   const renderScoreCard = (player: Player, averages: ReturnType<typeof calculatePonderatedAverages>, _accentColor: string, _deltaColor: string) => {
     const simple = averages.globalAverage;
@@ -179,7 +188,7 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
               <ResponsiveContainer width="100%" height={380}>
                 <RadarChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }} data={chartData}>
                   <PolarGrid stroke="var(--color-fm-border, #e5e7eb)" />
-                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 10, fill: "var(--color-fm-label, #6b7280)" }} />
+                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: isMobile ? 12 : 10, fill: "var(--color-fm-label, #6b7280)" }} />
                   <PolarRadiusAxis domain={[1, 6]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "var(--color-fm-text-muted, #9ca3af)" }} axisLine={false} />
                   <Radar name={selectedA!.name} dataKey="playerA" stroke="var(--color-fm-accent, #2563eb)" fill="var(--color-fm-accent, #2563eb)" fillOpacity={0.3} strokeWidth={2} />
                   <Radar name={selectedB!.name} dataKey="playerB" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} strokeWidth={2} />

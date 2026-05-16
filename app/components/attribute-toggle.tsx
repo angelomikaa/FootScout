@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router";
 import { ATTRIBUTE_KEYS } from "~/lib/scoring/player-average";
 
-const ATTRIBUTE_SHORT: Record<string, string> = {
+export const ATTRIBUTE_SHORT: Record<string, string> = {
   pace: "VEL",
   strength: "FOR",
   stamina: "RES",
