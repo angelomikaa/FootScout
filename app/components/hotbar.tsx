@@ -1,5 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router";
-import { useNavigationGuard } from "./navigation-guard";
+import { Link, useLocation } from "react-router";
 
 interface HotbarProps {
   draftCount: number;
@@ -14,12 +13,6 @@ const NAV_ITEMS = [
 
 export function Hotbar({ draftCount }: HotbarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { requestNavigation } = useNavigationGuard();
-
-  const handleNav = (to: string) => {
-    requestNavigation(to, () => navigate(to));
-  };
 
   return (
     <nav className="bg-white dark:bg-fm-card border-b border-fm-border sticky top-0 z-40">
@@ -31,9 +24,9 @@ export function Hotbar({ draftCount }: HotbarProps) {
                 (item.to !== "/" && location.pathname.startsWith(item.to));
 
               return (
-                <button
+                <Link
                   key={item.to}
-                  onClick={() => handleNav(item.to)}
+                  to={item.to}
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
                     ${
@@ -47,7 +40,7 @@ export function Hotbar({ draftCount }: HotbarProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                   </svg>
                   {item.label}
-                </button>
+                </Link>
               );
             })}
           </div>
