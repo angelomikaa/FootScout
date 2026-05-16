@@ -92,14 +92,19 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
     const delta = hasWeights && simple !== null && ponderated !== null ? ponderated - simple : 0;
 
     return (
-      <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-6 flex flex-col items-center justify-center text-center">
-        <p className="text-sm font-semibold text-gray-500 dark:text-fm-text-secondary mb-1">{player.name}</p>
+      <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border py-6 flex flex-col items-center justify-center text-center">
+        <p className="text-xs font-semibold text-gray-500 dark:text-fm-text-secondary mb-0.5">{player.name}</p>
         <p className="text-xs text-gray-400 dark:text-fm-text-muted mb-4">{player.position} · {player.club}</p>
 
         {hasWeights && ponderated !== null ? (
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-baseline gap-1.5">
-              <span className={`text-3xl font-bold ${
+          <div className="flex flex-col items-center gap-0.5">
+            {simple !== null && (
+              <span className="text-xs text-gray-400 dark:text-fm-text-muted">
+                {simple.toFixed(2)}
+              </span>
+            )}
+            <div className="flex items-baseline gap-1">
+              <span className={`text-2xl font-bold ${
                 delta > 0.005
                   ? "text-green-600 dark:text-green-400"
                   : delta < -0.005
@@ -108,20 +113,15 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
               }`}>
                 {ponderated.toFixed(2)}
               </span>
-              {delta > 0.005 && <span className="text-green-600 dark:text-green-400 text-sm font-bold">↑</span>}
-              {delta < -0.005 && <span className="text-red-500 dark:text-red-400 text-sm font-bold">↓</span>}
+              {delta > 0.005 && <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>}
+              {delta < -0.005 && <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>}
             </div>
-            {simple !== null && (
-              <span className="text-sm text-gray-400 dark:text-fm-text-muted">
-                simples {simple.toFixed(2)}
-              </span>
-            )}
           </div>
         ) : (
-          <p className="text-3xl font-bold text-fm-accent">{simple?.toFixed(2) ?? "—"}</p>
+          <p className="text-2xl font-bold text-fm-accent">{simple?.toFixed(2) ?? "—"}</p>
         )}
 
-        <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-4">{averages.reportCount} relatório{averages.reportCount !== 1 ? "s" : ""}</p>
+        <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-3">{averages.reportCount} relatório{averages.reportCount !== 1 ? "s" : ""}</p>
       </div>
     );
   };
@@ -171,15 +171,15 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
         <>
           <AttributeToggle boostedAttrs={boostedAttrs} />
 
-          <div className="grid grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-[1fr_2fr_1fr] gap-6 mb-6">
             {renderScoreCard(selectedA!, averagesA, "var(--color-fm-accent, #2563eb)", "var(--color-fm-accent-hover, #1d4ed8)")}
 
-            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4">
-              <ResponsiveContainer width="100%" height={300}>
+            <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-2">
+              <ResponsiveContainer width="100%" height={380}>
                 <RadarChart data={chartData}>
                   <PolarGrid stroke="var(--color-fm-border, #e5e7eb)" />
-                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 10, fill: "var(--color-fm-label, #6b7280)" }} />
-                  <PolarRadiusAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 9, fill: "var(--color-fm-text-muted, #9ca3af)" }} axisLine={false} />
+                  <PolarAngleAxis dataKey="attribute" tick={{ fontSize: 11, fill: "var(--color-fm-label, #6b7280)" }} />
+                  <PolarRadiusAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 10, fill: "var(--color-fm-text-muted, #9ca3af)" }} axisLine={false} />
                   <Radar name={selectedA!.name} dataKey="playerA" stroke="var(--color-fm-accent, #2563eb)" fill="var(--color-fm-accent, #2563eb)" fillOpacity={0.3} strokeWidth={2} />
                   <Radar name={selectedB!.name} dataKey="playerB" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} strokeWidth={2} />
                 </RadarChart>
