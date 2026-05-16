@@ -86,21 +86,41 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
     }));
   }, [averagesA, averagesB]);
 
-  const renderScoreCard = (player: Player, averages: ReturnType<typeof calculatePonderatedAverages>, color: string, hoverColor: string) => (
-    <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4 text-center">
-      <p className="text-sm font-semibold text-gray-500 dark:text-fm-text-secondary mb-1">{player.name}</p>
-      <p className="text-xs text-gray-400 dark:text-fm-text-muted mb-2">{player.position} · {player.club}</p>
-      <p className="text-3xl font-bold" style={{ color }}>{averages.globalAverage?.toFixed(2) ?? "—"}</p>
-      <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-1">Média Simples</p>
-      {hasWeights && averages.ponderatedGlobalAverage !== null && (
-        <>
-          <p className="text-2xl font-bold mt-2" style={{ color: hoverColor }}>{averages.ponderatedGlobalAverage.toFixed(2)}</p>
-          <p className="text-xs mt-1" style={{ color: hoverColor }}>Média Ponderada</p>
-        </>
-      )}
-      <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-2">{averages.reportCount} relatório{averages.reportCount !== 1 ? "s" : ""}</p>
-    </div>
-  );
+  const renderScoreCard = (player: Player, averages: ReturnType<typeof calculatePonderatedAverages>, accentColor: string, deltaColor: string) => {
+    const simple = averages.globalAverage;
+    const ponderated = averages.ponderatedGlobalAverage;
+    const delta = hasWeights && simple !== null && ponderated !== null ? ponderated - simple : 0;
+
+    return (
+      <div className="bg-white dark:bg-fm-card rounded-lg border border-gray-200 dark:border-fm-border p-4 text-center">
+        <p className="text-sm font-semibold text-gray-500 dark:text-fm-text-secondary mb-1">{player.name}</p>
+        <p className="text-xs text-gray-400 dark:text-fm-text-muted mb-2">{player.position} · {player.club}</p>
+
+        {hasWeights && ponderated !== null ? (
+          <div className="flex items-baseline justify-center gap-1.5">
+            {simple !== null && (
+              <span className="text-xs text-gray-400 dark:text-fm-text-muted">{simple.toFixed(2)}</span>
+            )}
+            <span className={`text-lg font-bold ${
+              delta > 0.005
+                ? "text-green-600 dark:text-green-400"
+                : delta < -0.005
+                  ? "text-red-500 dark:text-red-400"
+                  : "text-fm-accent"
+            }`}>
+              {ponderated.toFixed(2)}
+            </span>
+            {delta > 0.005 && <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>}
+            {delta < -0.005 && <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>}
+          </div>
+        ) : (
+          <p className="text-sm font-semibold text-fm-accent">{simple?.toFixed(2) ?? "—"}</p>
+        )}
+
+        <p className="text-xs text-gray-400 dark:text-fm-text-muted mt-2">{averages.reportCount} relatório{averages.reportCount !== 1 ? "s" : ""}</p>
+      </div>
+    );
+  };
 
   const updateUrl = (from: Player | null, to: Player | null) => {
     const newParams = new URLSearchParams();
