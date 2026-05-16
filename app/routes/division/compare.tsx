@@ -75,7 +75,7 @@ export default function ComparePage({ loaderData }: Route.ComponentProps) {
     return players.filter((p) => p.positionGroup === selectedA.positionGroup);
   }, [selectedA, players]);
 
-  const canCompare = selectedA !== null && selectedB !== null && averagesA !== null && averagesB !== null;
+  const canCompare = selectedA !== null && selectedB !== null && averagesA?.globalAverage !== null && averagesB?.globalAverage !== null;
 
   const chartData = useMemo(() => {
     if (!averagesA || !averagesB) return [];
