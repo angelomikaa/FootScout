@@ -516,7 +516,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 </Link>
 
                 <Link
-                  to="/division/players?compare="
+                  to="/division/players"
                   className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-fm-border hover:border-fm-accent dark:hover:border-fm-accent transition-colors group"
                 >
                   <div className="w-9 h-9 rounded-lg bg-fm-accent/10 flex items-center justify-center shrink-0">
@@ -526,7 +526,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-900 dark:text-fm-text group-hover:text-fm-accent">Comparar Jogadores</h4>
-                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Radar lado a lado com pesos</p>
+                    <p className="text-xs text-gray-500 dark:text-fm-text-muted">Selecionar dois na lista</p>
                   </div>
                 </Link>
               </div>
