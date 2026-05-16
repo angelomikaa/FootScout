@@ -5,6 +5,7 @@
 FootScout is a soccer scouting dashboard for U15 youth prospect capture. Scouts manually enter detailed player observations (physical, technical, tactical, and match notes) which the system transforms into consistent, weighted visual profiles. The scouting division browses, compares, and tracks prospects over time — deciding who to sign now versus who to keep monitoring.
 
 **Shipped v1.0** with 8 phases: data foundation → staged report form → draft management → player list/search → player profiles → simple scoring + radar → ponderated scoring + breakdown → player comparison.
+**Shipped v1.1 Phase 9**: Navigation & UX Polish — fixed hotbar, unsaved changes guard, dedicated compare tab, home page cleanup.
 
 ## Core Value
 
@@ -22,6 +23,7 @@ The weighted scoring engine — ponderated averages from 1 to 5 that shift based
 - ✓ BROWSE-01 through BROWSE-04: Player list, search, profiles — v1.0
 - ✓ SCORE-01 through SCORE-05: Simple averages, radar, ponderated weights, breakdown — v1.0
 - ✓ COMP-01 through COMP-03: Side-by-side comparison with dual radar — v1.0
+- ✓ NAV-01 through NAV-08: Fixed hotbar, dirty-form guard, dedicated compare route, home cleanup — v1.1 Phase 9
 
 ### Active
 
@@ -52,6 +54,7 @@ The weighted scoring engine — ponderated averages from 1 to 5 that shift based
 ## Context
 
 - **Shipped:** v1.0 on 2026-05-15 (4 days, 65 commits, ~3,815 LOC TypeScript/TSX)
+- **Shipped:** v1.1 Phase 9 on 2026-05-15 (2 commits, ~698 insertions, ~755 deletions)
 - **Tech stack:** React Router 7 (framework mode, SSR) + Tailwind CSS 4 + TypeScript + Vite 8 + Recharts + Zod
 - **Data layer:** JSON files (v1) — designed for swap to Supabase later
 - **User feedback themes:** Score breakdown transparency is the standout feature; comparison view is highly valued for relative evaluations
@@ -79,6 +82,11 @@ The weighted scoring engine — ponderated averages from 1 to 5 that shift based
 | Score breakdown ships WITH ponderated engine | Transparency is the product, not a polish feature | ✓ Good — standout user feedback |
 | Staged form with single useForm | Simpler state management across 5 steps | ✓ Good — no circular dependency issues |
 | Cookie-based scout identity (7-day) | D-13 requirement, enables draft resume | ✓ Good — auto-save on step transition works well |
+| Hotbar replaces redundant home navigation cards | Horizontal space is abundant; sidebar would compete with table content | ✓ Good — clean, compact, consistent across pages |
+| `requestNavigation` pattern over `useBlocker` | RR7's `useBlocker` doesn't catch link clicks, only browser nav | ✓ Good — covers hotbar clicks + browser back |
+| Dedicated compare route over inline comparison | Inline made it hard to browse while comparing; dedicated tab allows parallel workflow | ✓ Good — combobox selectors are faster than toggle buttons |
+| Actions panel on home above prospects | "Novo Relatório" was buried in hotbar; prominent panel increases discoverability | ✓ Good — primary action is now above the fold |
+| Shared layout route (`_layout.tsx`) | DRY — header + hotbar on every page without duplicating in each route | ✓ Good — single source of truth for nav |
 
 ## Evolution
 
@@ -98,4 +106,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-15 after v1.0 milestone*
+*Last updated: 2026-05-15 after v1.1 Phase 9 (Navigation & UX Polish)*

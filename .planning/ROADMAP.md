@@ -7,6 +7,7 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-8 (shipped 2026-05-15) — [Archive](milestones/v1.0-ROADMAP.md)
+- 🚧 **v1.1 Navigation & UX Polish** — Phase 9 (in progress 2026-05-15)
 
 ## Phases
 
@@ -24,6 +25,13 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 
 </details>
 
+<details>
+<summary>🚧 v1.1 Navigation & UX Polish (Phase 9) — IN PROGRESS</summary>
+
+- [x] Phase 9: Navigation & UX Polish (1/1 plans) — completed 2026-05-15
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -36,3 +44,4 @@ FootScout's roadmap flows from data foundation to data entry to data consumption
 | 6. Simple Scoring & Radar | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 7. Ponderated Scoring & Breakdown | v1.0 | 2/2 | Complete | 2026-05-15 |
 | 8. Player Comparison | v1.0 | 2/2 | Complete | 2026-05-15 |
+| 9. Navigation & UX Polish | v1.1 | 1/1 | Complete | 2026-05-15 |

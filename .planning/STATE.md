@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** The weighted scoring engine — ponderated averages from 1 to 5 that shift based on what the division is looking for, with transparent breakdowns showing why a player's score rises or falls under specific search parameters.
-**Current focus:** Planning v1.1 — Decision workflow, multi-scout intelligence, longitudinal tracking
+**Current focus:** v1.1 Navigation & UX Polish — Phase 9 complete, planning next v1.1 features
 
 ## Current Position
 
-Phase: All 8 phases complete — v1.0 MVP shipped
-Status: ✅ Milestone archived
-Last activity: 2026-05-15 — v1.0 milestone complete: audit warnings fixed, roadmap/requirements archived, PROJECT.md evolved
+Phase: 9/9 — Navigation & UX Polish
+Status: ✅ Phase complete
+Last activity: 2026-05-15 — Phase 9 complete: hotbar navigation, unsaved changes guard, dedicated compare tab, home page cleanup, shared layout route
 
-Progress: [██████████] 100%
+Progress: [██████████] 100% (v1.0 + v1.1 Phase 9)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: ~1 hour
-- Total execution time: ~16 hours
+- Total execution time: ~17 hours
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: [██████████] 100%
 | 6 | 2 | 2 | ~30 min |
 | 7 | 2 | 2 | ~45 min |
 | 8 | 2 | 2 | ~45 min |
+| 9 | 1 | 1 | ~1 hour |
 
 **Recent Trend:**
-- Last 5 plans: 15 plans completed
+- Last 5 plans: 16 plans completed
 - Trend: Accelerating
 
 *Updated after each plan completion*
@@ -51,6 +52,8 @@ Recent decisions affecting next milestone:
 - JSON file data layer needs Supabase migration before production
 - Score breakdown transparency is the standout feature — lean into this for v1.1
 - Comparison view highly valued — decision workflow (Sign/Monitor/Pass) is natural next step
+- Hotbar navigation replaces redundant home page cards — cleaner, more discoverable
+- Dedicated compare route with combobox selectors is faster than inline toggle buttons
 
 ### Pending Todos
 
@@ -73,5 +76,5 @@ Items acknowledged and carried forward from v1.0 milestone close:
 ## Session Continuity
 
 Last session: 2026-05-15
-Stopped at: v1.0 milestone archived — ready for `/gsd-new-milestone`
+Stopped at: Phase 9 (Navigation & UX Polish) complete — ready for next v1.1 features
 Resume file: .planning/ROADMAP.md
