@@ -1,10 +1,10 @@
 import { Link, useSearchParams } from "react-router";
 import { useEffect } from "react";
-import { getPlayers, getReports, getScouts, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
+import { getPlayers, getReports, getScouts, getPlayerReportStats } from "~/data/data";
 import { calculateOverallAverage } from "~/lib/scoring/average";
 import { calculatePlayerAverages } from "~/lib/scoring/player-average";
 import type { Route } from "./+types/home";
-import type { Player } from "~/data/types";
+import type { Player, Report } from "~/data/types";
 
 export async function loader() {
   const [players, reports, scouts, reportStats] = await Promise.all([
@@ -36,11 +36,19 @@ export async function loader() {
   const uniqueOpponents = new Set(submittedReports.map((r) => r.opponent)).size;
   const uniqueCompetitions = new Set(submittedReports.map((r) => r.competition)).size;
 
+  const reportsByPlayer: Record<string, Report[]> = {};
+  for (const report of submittedReports) {
+    if (!reportsByPlayer[report.playerId]) {
+      reportsByPlayer[report.playerId] = [];
+    }
+    reportsByPlayer[report.playerId].push(report);
+  }
+
   const bestPerPosition: Record<string, { player: Player; average: number }> = {};
   for (const player of players) {
     const stats = reportStats[player.id];
     if (!stats || stats.count === 0) continue;
-    const reports = await getReportsByPlayer(player.id);
+    const reports = reportsByPlayer[player.id] || [];
     const averages = calculatePlayerAverages(reports);
     if (averages.globalAverage === null) continue;
     const existing = bestPerPosition[player.position];

@@ -1,22 +1,32 @@
 import { useLoaderData, useSearchParams, useNavigate } from "react-router";
-import { getPlayers, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
+import { getPlayers, getPlayerReportStats, getReports } from "~/data/data";
 import { PlayerList } from "~/components/player-list";
 import { AttributeToggle } from "~/components/attribute-toggle";
-import type { Player } from "~/data/types";
+import type { Player, Report } from "~/data/types";
 import { parseWeightParams, calculatePonderatedAverages, calculatePlayerAverages } from "~/lib/scoring/player-average";
 import type { Route } from "./+types/players";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const boostedAttrs = parseWeightParams(request);
-  const [players, reportStats] = await Promise.all([
+  const [players, reportStats, allReports] = await Promise.all([
     getPlayers(),
     getPlayerReportStats(),
+    getReports(),
   ]);
+
+  const submittedReports = allReports.filter((r) => r.status === "submitted");
+  const reportsByPlayer: Record<string, Report[]> = {};
+  for (const report of submittedReports) {
+    if (!reportsByPlayer[report.playerId]) {
+      reportsByPlayer[report.playerId] = [];
+    }
+    reportsByPlayer[report.playerId].push(report);
+  }
 
   let playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>> = {};
   let playerSimpleAverages: Record<string, ReturnType<typeof calculatePlayerAverages>> = {};
   for (const player of players) {
-    const reports = await getReportsByPlayer(player.id);
+    const reports = reportsByPlayer[player.id] || [];
     playerSimpleAverages[player.id] = calculatePlayerAverages(reports);
     if (boostedAttrs.length > 0) {
       playerWeightedAverages[player.id] = calculatePonderatedAverages(reports, boostedAttrs);
