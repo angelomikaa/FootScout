@@ -322,21 +322,25 @@ export function PlayerList({
                   <td className="px-6 py-4 whitespace-nowrap">
                     {hasWeights && ponderated !== null ? (
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-lg font-bold text-fm-accent">
+                        {simple !== null && (
+                          <span className="text-xs text-gray-400 dark:text-fm-text-muted">
+                            {simple.toFixed(2)}
+                          </span>
+                        )}
+                        <span className={`text-lg font-bold ${
+                          delta > 0.005
+                            ? "text-green-600 dark:text-green-400"
+                            : delta < -0.005
+                              ? "text-red-500 dark:text-red-400"
+                              : "text-fm-accent"
+                        }`}>
                           {ponderated.toFixed(2)}
                         </span>
-                        {simple !== null && (
-                          <>
-                            <span className="text-xs text-gray-400 dark:text-fm-text-muted">
-                              {simple.toFixed(2)}
-                            </span>
-                            {delta > 0.005 && (
-                              <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>
-                            )}
-                            {delta < -0.005 && (
-                              <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>
-                            )}
-                          </>
+                        {delta > 0.005 && (
+                          <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>
+                        )}
+                        {delta < -0.005 && (
+                          <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>
                         )}
                       </div>
                     ) : (
