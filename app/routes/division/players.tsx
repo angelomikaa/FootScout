@@ -1,23 +1,17 @@
-import { useLoaderData, useSearchParams, useNavigate, useRevalidator } from "react-router";
-import { getPlayers, getPlayerReportStats, getReportsByPlayer, getAllPlayerDecisions } from "~/data/data";
+import { useLoaderData, useSearchParams, useNavigate } from "react-router";
+import { getPlayers, getPlayerReportStats, getReportsByPlayer } from "~/data/data";
 import { PlayerList } from "~/components/player-list";
 import { AttributeToggle } from "~/components/attribute-toggle";
-import type { Player, DecisionStatus } from "~/data/types";
+import type { Player } from "~/data/types";
 import { parseWeightParams, calculatePonderatedAverages, calculatePlayerAverages } from "~/lib/scoring/player-average";
 import type { Route } from "./+types/players";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const boostedAttrs = parseWeightParams(request);
-  const [players, reportStats, decisions] = await Promise.all([
+  const [players, reportStats] = await Promise.all([
     getPlayers(),
     getPlayerReportStats(),
-    getAllPlayerDecisions(),
   ]);
-
-  const decisionMap: Record<string, DecisionStatus | null> = {};
-  for (const d of decisions) {
-    decisionMap[d.playerId] = d.status;
-  }
 
   let playerWeightedAverages: Record<string, ReturnType<typeof calculatePonderatedAverages>> = {};
   let playerSimpleAverages: Record<string, ReturnType<typeof calculatePlayerAverages>> = {};
@@ -29,18 +23,16 @@ export async function loader({ request }: Route.LoaderArgs) {
     }
   }
 
-  return { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages, decisionMap };
+  return { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages };
 }
 
 export default function PlayersPage() {
-  const { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages, decisionMap } = useLoaderData<typeof loader>();
+  const { players, reportStats, boostedAttrs, playerWeightedAverages, playerSimpleAverages } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const revalidator = useRevalidator();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortDirection = (searchParams.get("sortDirection") as "asc" | "desc") || "desc";
-  const decisionFilter = searchParams.get("decision") || "all";
 
   const effectiveSortBy = boostedAttrs.length > 0 && sortBy === "createdAt"
     ? "weightedScore"
@@ -100,37 +92,13 @@ export default function PlayersPage() {
     setSearchParams(newParams);
   };
 
-  const handleDecisionFilterChange = (value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value !== "all") {
-      newParams.set("decision", value);
-    } else {
-      newParams.delete("decision");
-    }
-    setSearchParams(newParams);
-  };
-
-  const handleDecisionChange = async (playerId: string, status: DecisionStatus | null) => {
-    const formData = new FormData();
-    formData.append("playerId", playerId);
-    if (status) {
-      formData.append("_action", "set");
-      formData.append("status", status);
-    } else {
-      formData.append("_action", "clear");
-    }
-    await fetch("/division/decisions", { method: "POST", body: formData });
-    revalidator.revalidate();
-  };
-
   const uniqueClubs = Array.from(new Set(players.map((p) => p.club))).sort();
 
   const filteredPlayers = players.filter((player) => {
     const matchesSearch = player.name.toLowerCase().includes(search.toLowerCase());
     const matchesPosition = positionFilter === "all" || player.positionGroup === positionFilter;
     const matchesClub = clubFilter === "all" || player.club === clubFilter;
-    const matchesDecision = decisionFilter === "all" || decisionMap[player.id] === decisionFilter;
-    return matchesSearch && matchesPosition && matchesClub && matchesDecision;
+    return matchesSearch && matchesPosition && matchesClub;
   });
 
   return (
@@ -155,10 +123,6 @@ export default function PlayersPage() {
         playerWeightedAverages={playerWeightedAverages}
         playerSimpleAverages={playerSimpleAverages}
         onCompareHook={handleCompareHook}
-        decisions={decisionMap}
-        decisionFilter={decisionFilter}
-        onDecisionFilterChange={handleDecisionFilterChange}
-        onDecisionChange={handleDecisionChange}
       />
     </div>
   );

@@ -1,9 +1,8 @@
 import { Link } from "react-router";
-import type { Player, DecisionStatus } from "../data/types";
+import type { Player } from "../data/types";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
 import { Search } from "lucide-react";
-import { DecisionToggle } from "./decision-toggle";
 
 interface PlayerListProps {
   players: Player[];
@@ -22,10 +21,6 @@ interface PlayerListProps {
   playerWeightedAverages?: Record<string, { ponderatedGlobalAverage: number | null }>;
   playerSimpleAverages?: Record<string, { globalAverage: number | null }>;
   onCompareHook?: (playerId: string) => void;
-  decisions?: Record<string, DecisionStatus | null>;
-  decisionFilter?: string;
-  onDecisionFilterChange?: (value: string) => void;
-  onDecisionChange?: (playerId: string, status: DecisionStatus | null) => void;
 }
 
 export function PlayerList({
@@ -45,10 +40,6 @@ export function PlayerList({
   playerWeightedAverages = {},
   playerSimpleAverages = {},
   onCompareHook,
-  decisions = {},
-  decisionFilter = "all",
-  onDecisionFilterChange,
-  onDecisionChange,
 }: PlayerListProps) {
   const calculateAge = (dateOfBirth: string): number => {
     const birthDate = new Date(dateOfBirth);
@@ -119,17 +110,6 @@ export function PlayerList({
         return sortDirection === "asc"
           ? aWeighted - bWeighted
           : bWeighted - aWeighted;
-      }
-      case "decision": {
-        const decisionRank = (s: DecisionStatus | null | undefined) => {
-          if (s === "sign") return 3;
-          if (s === "monitor") return 2;
-          if (s === "pass") return 1;
-          return 0;
-        };
-        aValue = decisionRank(decisions?.[a.id]);
-        bValue = decisionRank(decisions?.[b.id]);
-        break;
       }
       default:
         return 0;
@@ -226,6 +206,8 @@ export function PlayerList({
     );
   }
 
+  const hasWeights = boostedAttrs.length > 0;
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
@@ -262,18 +244,6 @@ export function PlayerList({
             </option>
           ))}
         </Select>
-        {onDecisionFilterChange && (
-          <Select
-            value={decisionFilter}
-            onChange={(e) => onDecisionFilterChange(e.target.value)}
-            className="w-full sm:w-40"
-          >
-            <option value="all">Todas as decisões</option>
-            <option value="sign">Sign</option>
-            <option value="monitor">Monitor</option>
-            <option value="pass">Pass</option>
-          </Select>
-        )}
       </div>
       <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-fm-border">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-fm-border">
@@ -291,20 +261,12 @@ export function PlayerList({
               >
                 Jogador{renderSortIndicator("player")}
               </th>
-                <th
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("average")}
               >
                 Média{renderSortIndicator("average")}
               </th>
-              {onDecisionChange && (
-                <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
-                  onClick={() => handleSort("decision")}
-                >
-                  Decisão{renderSortIndicator("decision")}
-                </th>
-              )}
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
                 onClick={() => handleSort("club")}
@@ -329,14 +291,6 @@ export function PlayerList({
               >
                 Última Avaliação{renderSortIndicator("lastScouted")}
               </th>
-              {boostedAttrs.length > 0 && (
-                <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider cursor-pointer group hover:bg-gray-100 dark:hover:bg-fm-card"
-                  onClick={() => handleSort("weightedScore")}
-                >
-                  Ponderada{renderSortIndicator("weightedScore")}
-                </th>
-              )}
               {onCompareHook && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-fm-label uppercase tracking-wider">
                   Comparar
@@ -345,63 +299,78 @@ export function PlayerList({
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-fm-card divide-y divide-gray-200 dark:divide-fm-border">
-            {sortedPlayers.map((player) => (
-              <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
-                    {player.position}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <Link
-                    to={`/division/players/${player.id}`}
-                    className="text-gray-900 hover:text-fm-accent dark:text-fm-text dark:hover:text-fm-accent"
-                  >
-                    {player.name}
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent">
-                  {getSimpleAverage(player)?.toFixed(2) ?? "—"}
-                </td>
-                {onDecisionChange && (
+            {sortedPlayers.map((player) => {
+              const simple = playerSimpleAverages?.[player.id]?.globalAverage ?? null;
+              const ponderated = playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage ?? null;
+              const delta = hasWeights && simple !== null && ponderated !== null ? ponderated - simple : 0;
+
+              return (
+                <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-fm-card-alt">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <DecisionToggle
-                      playerId={player.id}
-                      currentStatus={decisions?.[player.id] ?? null}
-                      onStatusChange={(status) => onDecisionChange(player.id, status)}
-                    />
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-fm-accent/20 dark:text-fm-accent">
+                      {player.position}
+                    </span>
                   </td>
-                )}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
-                  {player.club}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
-                  {calculateAge(player.dateOfBirth)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
-                  {getReportCount(player)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
-                  {getLastScouted(player)}
-                </td>
-                {boostedAttrs.length > 0 && (
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-fm-accent-hover">
-                    {playerWeightedAverages?.[player.id]?.ponderatedGlobalAverage?.toFixed(2) ?? "—"}
-                  </td>
-                )}
-                {onCompareHook && (
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      type="button"
-                      onClick={() => onCompareHook(player.id)}
-                      className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card transition-colors"
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <Link
+                      to={`/division/players/${player.id}`}
+                      className="text-gray-900 hover:text-fm-accent dark:text-fm-text dark:hover:text-fm-accent"
                     >
-                      Comparar
-                    </button>
+                      {player.name}
+                    </Link>
                   </td>
-                )}
-              </tr>
-            ))}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {hasWeights && ponderated !== null ? (
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-lg font-bold text-fm-accent">
+                          {ponderated.toFixed(2)}
+                        </span>
+                        {simple !== null && (
+                          <>
+                            <span className="text-xs text-gray-400 dark:text-fm-text-muted">
+                              {simple.toFixed(2)}
+                            </span>
+                            {delta > 0.005 && (
+                              <span className="text-green-600 dark:text-green-400 text-xs font-bold">↑</span>
+                            )}
+                            {delta < -0.005 && (
+                              <span className="text-red-500 dark:text-red-400 text-xs font-bold">↓</span>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-sm font-semibold text-fm-accent">
+                        {simple?.toFixed(2) ?? "—"}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                    {player.club}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                    {calculateAge(player.dateOfBirth)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                    {getReportCount(player)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-fm-text-secondary">
+                    {getLastScouted(player)}
+                  </td>
+                  {onCompareHook && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        type="button"
+                        onClick={() => onCompareHook(player.id)}
+                        className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-fm-card-alt dark:text-fm-label hover:bg-gray-200 dark:hover:bg-fm-card transition-colors"
+                      >
+                        Comparar
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

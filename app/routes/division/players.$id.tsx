@@ -1,13 +1,11 @@
-import { useLoaderData, Link, useRevalidator } from "react-router";
-import { getPlayerById, getReportsByPlayer, getScouts, getPlayerDecision } from "~/data/data";
+import { useLoaderData, Link } from "react-router";
+import { getPlayerById, getReportsByPlayer, getScouts } from "~/data/data";
 import { calculatePonderatedAverages, parseWeightParams } from "~/lib/scoring/player-average";
 import { IdentityCard } from "~/components/identity-card";
 import { ReportCard } from "~/components/report-card";
 import { AttributeToggle } from "~/components/attribute-toggle";
-import { DecisionToggle } from "~/components/decision-toggle";
 import PlayerScores from "~/components/player-scores";
 import type { Route } from "./+types/players.$id";
-import type { DecisionStatus } from "~/data/types";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   const boostedAttrs = parseWeightParams(request);
@@ -16,10 +14,9 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     throw new Response(null, { status: 404, statusText: "Player not found" });
   }
 
-  const [reports, scouts, decision] = await Promise.all([
+  const [reports, scouts] = await Promise.all([
     getReportsByPlayer(params.id),
     getScouts(),
-    getPlayerDecision(params.id),
   ]);
 
   const submittedReports = reports
@@ -33,25 +30,11 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const playerAverages = calculatePonderatedAverages(reports, boostedAttrs);
 
-  return { player, reports: submittedReports, scoutNames, playerAverages, boostedAttrs, decision };
+  return { player, reports: submittedReports, scoutNames, playerAverages, boostedAttrs };
 }
 
 export default function PlayerProfilePage() {
-  const { player, reports, scoutNames, playerAverages, boostedAttrs, decision } = useLoaderData<typeof loader>();
-  const revalidator = useRevalidator();
-
-  const handleDecisionChange = async (status: DecisionStatus | null) => {
-    const formData = new FormData();
-    formData.append("playerId", player.id);
-    if (status) {
-      formData.append("_action", "set");
-      formData.append("status", status);
-    } else {
-      formData.append("_action", "clear");
-    }
-    await fetch("/division/decisions", { method: "POST", body: formData });
-    revalidator.revalidate();
-  };
+  const { player, reports, scoutNames, playerAverages, boostedAttrs } = useLoaderData<typeof loader>();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -67,21 +50,6 @@ export default function PlayerProfilePage() {
       <div className="space-y-8">
         <section>
           <IdentityCard player={player} />
-        </section>
-
-        <section>
-          <div className="border-t border-gray-200 dark:border-fm-border pt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-fm-text">
-                Decisão da Divisão
-              </h2>
-              <DecisionToggle
-                playerId={player.id}
-                currentStatus={decision?.status ?? null}
-                onStatusChange={handleDecisionChange}
-              />
-            </div>
-          </div>
         </section>
 
         <section>
