@@ -7,7 +7,6 @@ interface HotbarProps {
 
 const NAV_ITEMS = [
   { label: "Dashboard", to: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
-  { label: "Novo Relatório", to: "/scout/report", primary: true, icon: "M12 4v16m8-8H4" },
   { label: "Meus Relatórios", to: "/scout/reports", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
   { label: "Jogadores", to: "/division/players", icon: "M17 20h5v-2a3 3 0 00-5.354-1.172M12 15a3 3 0 100-6 3 3 0 000 6zm-5.354-8.172a3 3 0 105.354 0 3 3 0 00-5.354 0z" },
   { label: "Comparar", to: "/division/compare", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
@@ -30,21 +29,6 @@ export function Hotbar({ draftCount }: HotbarProps) {
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.to ||
                 (item.to !== "/" && location.pathname.startsWith(item.to));
-
-              if (item.primary) {
-                return (
-                  <button
-                    key={item.to}
-                    onClick={() => handleNav(item.to)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fm-accent text-white text-sm font-medium hover:bg-fm-accent-hover transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                    </svg>
-                    {item.label}
-                  </button>
-                );
-              }
 
               return (
                 <button
